@@ -87,8 +87,8 @@ var lCtrl;
 var stats = [];
 var vals = [];
 var hmap = [];
-var year = "2010";
-var crime = "threats";
+var year = "";
+var crime = "";
 var maxVal = 0;
 
 var heatmapLayer = null;
@@ -170,8 +170,9 @@ function makeBasicMap() {
   var yearSel = L.control({position: 'topleft'});
   yearSel.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'dropdown');
-    div.innerHTML = '<select onChange=updateMapYear(this)><option>2003</option><option>2004</option><option>2005</option><option>2006</option>\
-    <option>2007</option><option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>\
+    div.innerHTML = '<select onChange=updateMapData() id="yearDd"><option value="" selected disabled hidden>Select Year</option>\
+    <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>\
+    <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>\
     <option>2013</option><option>2014</option><option>2015</option><option>2016</option></select>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
@@ -181,64 +182,28 @@ function makeBasicMap() {
   var crimeSel = L.control({position: 'topright'});
   crimeSel.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'dropdown');
-    div.innerHTML = '<select onChange=updateMapCrime(this)><option>Attempts/threats to murder, assaults, harassments and related offences</option>\
-    <option>Dangerous or negligent acts</option><option>Kidnapping and related offences</option><option>Robbery, extortion and hijacking offences</option>\
-    <option>Burglary and related offences</option><option>Theft and related offences</option><option>Fraud, deception and related offences</option>\
-    <option>Controlled drug offences</option><option>Weapons and Explosives Offences</option><option>Damage to property and to the environment</option>\
-    <option>Public order and other social code offences</option><option>Offences against government, justice procedures and organisation of crime</option></select>';
+    div.innerHTML = '<select onChange=updateMapData() id="crimeDd"><option value="" selected disabled hidden>Select Crime</option>\
+    <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>\
+    <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>\
+    <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>\
+    <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>\
+    <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>\
+    <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>\
+    <option value="govmnt">Offences against government, justice procedures and organisation of crime</option></select>';
     div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
     return div;
   };
   crimeSel.addTo(map);
 }
 
-function updateMapYear(yr) {
-  year = yr.value;
-  //console.log(yr);
-  $.when( loadData() ).done(heatmapStart());
-}
-
-function updateMapCrime(cr) {
-  switch(cr.value) {
-    case "Attempts/threats to murder, assaults, harassments and related offences":
-      crime = "threats";
-      break;
-    case "Dangerous or negligent acts":
-      crime = "dangActs";
-      break;
-    case "Kidnapping and related offences":
-      crime = "kidnap";
-      break;
-    case "Robbery, extortion and hijacking offences":
-      crime = "robbery";
-      break;
-    case "Burglary and related offences":
-      crime = "burglary";
-      break;
-    case "Theft and related offences":
-      crime = "theft";
-      break;
-    case "Fraud, deception and related offences":
-      crime = "fraud";
-      break;
-    case "Controlled drug offences":
-      crime = "drugs";
-      break;
-    case "Weapons and Explosives Offences":
-      crime = "weapons";
-      break;
-    case "Damage to property and to the environment":
-      crime = "property";
-      break;
-    case "Public order and other social code offences":
-      crime = "social";
-      break;
-    case "Offences against government, justice procedures and organisation of crime":
-      crime = "govmnt";
-      break;
-  }
-
-  $.when( loadData() ).done(heatmapStart());
+function updateMapData() {
+  year = document.getElementById("yearDd").value;
+  crime = document.getElementById("crimeDd").value;
+  console.log(year);
+  console.log(crime);
+  //$.when( loadData() ).done(heatmapStart());
+  if(year != "" && crime != "")
+  loadData();
 }
 
 
@@ -331,17 +296,16 @@ function loadGardaStations() {
     $.ajax({
     url: 'http://139.59.162.120/stations/',
     //data: data,
-    success: function(data) {
-        console.log(data[311].name);
-        for(var i = 0; i < data.length; i++)
-        {
-            var marker = L.marker([data[i].Latitude, data[i].Longitude], {icon: gsIcon});
-            marker.bindPopup("<b>" + data[i].name + " Garda Station</b><br>Address: "
-                + data[i].Address + "<br> County: " + data[i].County
-                + "<br> Phone No: " + data[i].Phone);
-            markers.push(marker);
-        }
-        showGardaStations();
+    success: function(stations) {
+      stats = stations.map(stat => ({ name: stat.name, county: stat.County, lat: stat.Latitude, long: stat.Longitude }));;
+
+      for(var i = 0; i < stats.length; i++)
+      {
+          var marker = L.marker([stats[i].lat, stats[i].long], {icon: gsIcon});
+          markers.push(marker);
+      }
+
+      showGardaStations();
     }
     //dataType: dataType
     });
@@ -350,60 +314,54 @@ function loadGardaStations() {
 
 
 function loadData() {
-  $.when($.ajax("http://139.59.162.120/stations/"), $.getJSON("data/" + crime + ".json"))
-    .done(function (stations, values) {
-      if(stats.length==0){
-        stats = stations[0];
-        stats = stats.map(stat => ({ name: stat.name, county: stat.County, lat: stat.Latitude, long: stat.Longitude }));;
-      }
-      //console.log(stats);
-      vals = values[0];
-      vals = vals.map(val => ({ amt: parseInt(val[year]) }));
-      //console.log(vals);
-      maxVal = 0;
-      for(var i = 0; i < stats.length; i++)
-      {
-        stats[i].value = vals[i].amt;
-        if(vals[i].amt > maxVal){
-          maxVal = vals[i].amt;
-        }
-      }
-      if(markers.length < 500){
+  $.ajax({
+    dataType: "json",
+    url: "data/" + crime + ".json",
+    mimeType: "application/json",
+    success: function(values){
+
+        //console.log(stats);
+        vals = values.map(val => (parseInt(val[year]) ));
+        //console.log(vals);
+        maxVal = 0;
         for(var i = 0; i < stats.length; i++)
         {
-            var marker = L.marker([stats[i].lat, stats[i].long], {icon: gsIcon});
-            marker.bindPopup("<b>" + stats[i].name + " Garda Station</b>"
-                + "<br>County: " + stats[i].county + "<br>Reported Cases: " + stats[i].value);
-            markers.push(marker);
+          stats[i].value = vals[i];
+          if(vals[i] > maxVal){
+            maxVal = vals[i];
+          }
         }
-        console.log("Hi!");
-        showGardaStations();
-      }
-      else{
+
+        //console.log(Math.max(vals));
+
         for(var i = 0; i < stats.length; i++)
         {
             markers[i].bindPopup("<b>" + stats[i].name + " Garda Station</b>"
                 + "<br>County: " + stats[i].county + "<br>Reported Cases: " + stats[i].value);
         }
+
+        hmap = {max: maxVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
+
+        //HMAP NOT UPDATING¬!!!!
+        console.log("First HMAP", hmap);
+        //console.log(stats[0]);
+        if(heatmapLayer == null){
+          heatmapLayer = new HeatmapOverlay(cfg);
+          map.addLayer(heatmapLayer);
+          lCtrl.addOverlay(heatmapLayer, "Heatmap");
+        }
+        heatmapLayer.setData(hmap);
+        //console.log(hmap);
+        //alert(hmap[1].toSource())
       }
-
-
-      //console.log(stats[0]);
-      hmap = {max: maxVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
-
-      //console.log(hmap);
-      //alert(hmap[1].toSource())
     });
+    //setTimeout(heatmapStart(), 5000);
 }
 
 function heatmapStart() {
-  console.log(hmap);
-  if(heatmapLayer == null){
-    heatmapLayer = new HeatmapOverlay(cfg);
-    map.addLayer(heatmapLayer);
-    lCtrl.addOverlay(heatmapLayer, "Heatmap");
-  }
-  heatmapLayer.setData(hmap);
+  //console.log("Second HMAP", hmap);
+  //console.log(hmap.max);
+
 }
 
 function heatmapUpdate() {
