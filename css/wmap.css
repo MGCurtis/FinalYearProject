@@ -1,6 +1,7 @@
 #map {
     height: 66%;
-    width: 80%;
+    width: 80.3%;
+    float: right;
 }
 
 #buttons{
@@ -25,8 +26,26 @@
   border-width: 2px;
 }
 
+#dropdowns{
 
+}
 
+#yearDd{
+  width: 28%;
+  margin-left: 0.7%;
+}
+
+#crimeDd{
+  width: 70%;
+  float:right;
+}
+
+#dTable .ui-selecting {
+  background: #ccc;
+}
+#dTable .ui-selected {
+  background: #999;
+}
 
 .map-marker{
     text-align: center;
@@ -51,6 +70,8 @@ body{
 
 div{
   display: inline-block;
+  margin: 0;
+  padding: 0;
 }
 
 button {
@@ -59,4 +80,8 @@ button {
     overflow: auto;
     height: 100%;
     width: 32%;
+}
+
+li {
+  list-style-type: none;
 }

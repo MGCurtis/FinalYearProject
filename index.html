@@ -18,6 +18,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="downloads/heatmap.js-master/build/heatmap.js"></script>
     <script src="downloads/heatmap.js-master/plugins/leaflet-heatmap/leaflet-heatmap.js"></script>
+    <script src="downloads/jquery-ui-1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
 
 
@@ -27,13 +28,38 @@
     <!--<button id="locateMe" onclick="heatmap();">Locate Me</button>
     <button id="findStation" onclick="findMyNearestGardaStation();">Find Nearest Garda Station</button>
     <button id="getRoute" onclick="getRoute();">Get Route</button>>-->
+    <div id="dropdowns">
+      <select onChange=updateMapData() id="yearDd">
+        <option value="" selected disabled hidden>Select Year</option>
+        <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
+        <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
+        <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
+      </select>
+
+      <select onChange=updateMapData() id="crimeDd">
+        <option value="" selected disabled hidden>Select Crime</option>
+        <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
+        <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+        <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
+        <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
+        <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
+        <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
+        <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
+      </select>
+    </div>
 </div>
 <div id="map"></div>
 
 <div id="dataTable">
 
-  <table width="800" border="0"  class="my-table">
-  <tr>      </tr>
+  <table border="1"  id="dTable">
+    <thead>
+      <tr>   <th>Station Name</th> <th>County</th> <th>Reported Cases</th>   </tr>
+    </thead>
+
+    <tbody>
+    </tbody>
+
   </table>
 
 </div>

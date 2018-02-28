@@ -167,33 +167,7 @@ function makeBasicMap() {
 	map.setView(new L.LatLng(53.33743, -7),8);
 	map.addLayer(mapLayer);
 
-  var yearSel = L.control({position: 'topleft'});
-  yearSel.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'dropdown');
-    div.innerHTML = '<select onChange=updateMapData() id="yearDd"><option value="" selected disabled hidden>Select Year</option>\
-    <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>\
-    <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>\
-    <option>2013</option><option>2014</option><option>2015</option><option>2016</option></select>';
-    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
-    return div;
-  };
-  yearSel.addTo(map);
 
-  var crimeSel = L.control({position: 'topright'});
-  crimeSel.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'dropdown');
-    div.innerHTML = '<select onChange=updateMapData() id="crimeDd"><option value="" selected disabled hidden>Select Crime</option>\
-    <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>\
-    <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>\
-    <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>\
-    <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>\
-    <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>\
-    <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>\
-    <option value="govmnt">Offences against government, justice procedures and organisation of crime</option></select>';
-    div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
-    return div;
-  };
-  crimeSel.addTo(map);
 }
 
 function updateMapData() {
@@ -351,6 +325,8 @@ function loadData() {
           lCtrl.addOverlay(heatmapLayer, "Heatmap");
         }
         heatmapLayer.setData(hmap);
+        populateTable();
+        //$("#dTable").selectable();
         //console.log(hmap);
         //alert(hmap[1].toSource())
       }
@@ -366,4 +342,29 @@ function heatmapStart() {
 
 function heatmapUpdate() {
   heatmapLayer.setData(hmap);
+}
+
+function populateTable() {
+  var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
+  console.log(dTable.rows.length);
+  if(dTable.rows.length <= 1){
+    for(var i=0; i<stats.length; i++){
+      //console.log(stats[i]);
+      var row = dTable.insertRow(dTable.rows.length);
+      var cell1 = row.insertCell(0);
+      var cell2 = row.insertCell(1);
+      var cell3 = row.insertCell(2);
+
+      cell1.innerHTML = stats[i].name;
+      cell2.innerHTML = stats[i].county;
+      cell3.innerHTML = stats[i].value;
+    }
+  }
+  else{
+    for(var i=0; i<stats.length; i++){
+      //console.log(stats[i]);
+      dTable.rows[i].cells[2].innerHTML = stats[i].value;
+      //cell3.innerHTML = stats[i].value;
+    }
+  }
 }
