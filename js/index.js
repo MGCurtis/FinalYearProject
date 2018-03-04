@@ -221,9 +221,6 @@ function locateMe() {
 function findMyNearestGardaStation(e) {
     var closestDist =  Number.MAX_SAFE_INTEGER;
     var currentDist;
-    if (openStation !== null){
-      openStation.remove();
-    }
     for(var i = 0; i < markers.length; i++)
     {
         currentDist = map.distance(e.latlng, markers[i].getLatLng());
@@ -233,8 +230,6 @@ function findMyNearestGardaStation(e) {
         }
     }
     console.log(closestIndex);
-    openStation = markers[closestIndex];
-    openStation.addTo(map).openPopup();
     var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
     dTable.rows[closestIndex].dispatchEvent(new Event("mousedown"));
 }
@@ -364,9 +359,6 @@ function populateTable() {
           if ( selected !== null ) {
               selected.className='';
               markers[selected.rowIndex -1].remove();
-          }
-          if (openStation !== null){
-            openStation.remove();
           }
 
           // Mark this row as selected
