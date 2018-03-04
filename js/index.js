@@ -86,6 +86,7 @@ var lCtrl;
 
 var stats = [];
 var vals = [];
+var allVals = [];
 var hmap = [];
 var year = "";
 var crime = "";
@@ -229,9 +230,10 @@ function findMyNearestGardaStation(e) {
             closestDist = currentDist;
         }
     }
-    console.log(closestIndex);
     var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
     dTable.rows[closestIndex].dispatchEvent(new Event("mousedown"));
+    console.log(allVals[closestIndex]);
+    makeChart(allVals[closestIndex]);
 }
 
 //Get route from user position to closest garda station
@@ -277,6 +279,13 @@ function loadData() {
 
         //console.log(stats);
         vals = values.map(val => (parseInt(val[year]) ));
+        allVals = values.map(function(val) {
+          delete val.Name;
+          for(var i = 2003; i <= 2016; i++){
+            val[i] = parseInt(val[i]);
+          }
+          return val;
+        });
         //console.log(vals);
         maxVal = 0;
         for(var i = 0; i < stats.length; i++)
@@ -308,6 +317,7 @@ function loadData() {
         }
         heatmapLayer.setData(hmap);
         populateTable();
+        //makeChart();
         //$("#dTable").selectable();
         //console.log(hmap);
         //alert(hmap[1].toSource())
@@ -394,4 +404,50 @@ function populateTable() {
       //cell3.innerHTML = stats[i].value;
     }
   }
+}
+
+function makeChart(arr){
+  var ctx = document.getElementById("myChart").getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: '# of Reported Cases ',
+        data: [arr[2003], arr[2004], arr[2005], arr[2006], arr[2007],
+        arr[2008], arr[2009], arr[2010], arr[2011], arr[2012],
+        arr[2013], arr[2014], arr[2015], arr[2016]],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  });
+
 }
