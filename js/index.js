@@ -90,6 +90,9 @@ var hmap = [];
 var year = "";
 var crime = "";
 var maxVal = 0;
+var selected = null;
+var selectNo = null;
+var openStation = null;
 
 var heatmapLayer = null;
 var cfg = {
@@ -148,6 +151,8 @@ function onDeviceReady() {
             removed = !removed;
         }
     })
+
+    map.on('click', findMyNearestGardaStation);
 
 }
 
@@ -209,48 +214,29 @@ function locateMe() {
     map.on('locationerror', onLocationError);
 }
 
-//Creates layer group from markers array, creates a layer control to allow user to toggle layer on and off
-function showGardaStations() {
-
-  markerLayer = L.layerGroup(markers);
-  var overlay = { "Garda Stations": markerLayer};
-  lCtrl = L.control.layers(null, overlay).addTo(map);
-  //Shows routing object, put after layer control for the sake of presenting them in the desired order
-  //showRouting();
-
-}
-
-//Creates a routing control object, empty at first, popuplated after finding closest garda station
-// function showRouting() {
-//     route = L.Routing.control({
-//         createMarker: function() { return null; }
-//     }).addTo(map);
-// }
-
 //Loops through marker array, if distance of current index's marker from user marker is shorter
 //than the current shortest stored distance make the closest index var equal the current index
 //and make the closest distance var equal the current distance
 //At the end of the loop open the popup of the closest garda station.
-function findMyNearestGardaStation() {
-    //console.log(map.getBounds());
-    //console.log(map.getBounds().contains(user.getLatLng()));
-    //console.log(user.getLatLng().distanceTo(markers[311].getLatLng()));
-
+function findMyNearestGardaStation(e) {
     var closestDist =  Number.MAX_SAFE_INTEGER;
     var currentDist;
+    if (openStation !== null){
+      openStation.remove();
+    }
     for(var i = 0; i < markers.length; i++)
     {
-        currentDist = user.getLatLng().distanceTo(markers[i].getLatLng())
+        currentDist = map.distance(e.latlng, markers[i].getLatLng());
         if (currentDist < closestDist){
             closestIndex = i;
             closestDist = currentDist;
         }
-
     }
-    markers[closestIndex].openPopup();
-
-    if(map.hasLayer(route))
-        map.removeLayer(route);
+    console.log(closestIndex);
+    openStation = markers[closestIndex];
+    openStation.addTo(map).openPopup();
+    var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
+    dTable.rows[closestIndex].dispatchEvent(new Event("mousedown"));
 }
 
 //Get route from user position to closest garda station
@@ -279,7 +265,7 @@ function loadGardaStations() {
           markers.push(marker);
       }
 
-      showGardaStations();
+      //showGardaStations();
     }
     //dataType: dataType
     });
@@ -321,6 +307,7 @@ function loadData() {
         //console.log(stats[0]);
         if(heatmapLayer == null){
           heatmapLayer = new HeatmapOverlay(cfg);
+          lCtrl = L.control.layers(null).addTo(map);
           map.addLayer(heatmapLayer);
           lCtrl.addOverlay(heatmapLayer, "Heatmap");
         }
@@ -351,6 +338,54 @@ function populateTable() {
     for(var i=0; i<stats.length; i++){
       //console.log(stats[i]);
       var row = dTable.insertRow(dTable.rows.length);
+
+      row.onmouseover=function(){
+        // 'highlight' color is set in tablelist.css
+        if ( this.className === '') {
+            this.className='highlight';
+        }
+        return false
+      }
+      row.onmouseout=function(){
+        if ( this.className === 'highlight') {
+            this.className='';
+        }
+        return false
+      }
+
+      row.onmousedown=function(){
+        //
+        // Toggle the selected state of this row
+        //
+
+        // 'clicked' color is set in tablelist.css.
+        if ( this.className !== 'clicked' ) {
+          // Clear previous selection
+          if ( selected !== null ) {
+              selected.className='';
+              markers[selected.rowIndex -1].remove();
+          }
+          if (openStation !== null){
+            openStation.remove();
+          }
+
+          // Mark this row as selected
+          this.className='clicked';
+          selected = this;
+          selectNo = selected.rowIndex - 1;
+          console.log(selectNo);
+          openStation = markers[selectNo];
+          openStation.addTo(map).openPopup();
+
+        }
+        else {
+          this.className='';
+          selected = null;
+        }
+
+        return true
+      }
+
       var cell1 = row.insertCell(0);
       var cell2 = row.insertCell(1);
       var cell3 = row.insertCell(2);

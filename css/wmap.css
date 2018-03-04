@@ -85,3 +85,22 @@ button {
 li {
   list-style-type: none;
 }
+
+th {
+  background-color: lightblue;
+  width: 15.25%;
+}
+
+td {
+  
+  width: 20%;
+
+}
+
+tr.clicked {
+  background: #ccd;
+}
+
+tr.highlight {
+  background: #eef;
+}
