@@ -92,8 +92,11 @@ var year = "";
 var crime = "";
 var maxVal = 0;
 var selected = null;
+var myChart = null;
 var selectNo = null;
 var openStation = null;
+var selectData1 = [];
+
 
 var heatmapLayer = null;
 var cfg = {
@@ -156,6 +159,8 @@ function onDeviceReady() {
     map.on('click', findMyNearestGardaStation);
 
 }
+
+
 
 //Creates the map, gets tiles from the openstreetmap url and adds tiles to the map object
 function makeBasicMap() {
@@ -232,8 +237,8 @@ function findMyNearestGardaStation(e) {
     }
     var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
     dTable.rows[closestIndex].dispatchEvent(new Event("mousedown"));
-    console.log(allVals[closestIndex]);
-    makeChart(allVals[closestIndex]);
+    selectData1 = Object.values(allVals[closestIndex]);
+    makeChart();
 }
 
 //Get route from user position to closest garda station
@@ -307,7 +312,6 @@ function loadData() {
         hmap = {max: maxVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
 
         //HMAP NOT UPDATING¬!!!!
-        console.log("First HMAP", hmap);
         //console.log(stats[0]);
         if(heatmapLayer == null){
           heatmapLayer = new HeatmapOverlay(cfg);
@@ -338,7 +342,6 @@ function heatmapUpdate() {
 
 function populateTable() {
   var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
-  console.log(dTable.rows.length);
   if(dTable.rows.length <= 1){
     for(var i=0; i<stats.length; i++){
       //console.log(stats[i]);
@@ -375,7 +378,6 @@ function populateTable() {
           this.className='clicked';
           selected = this;
           selectNo = selected.rowIndex - 1;
-          console.log(selectNo);
           openStation = markers[selectNo];
           openStation.addTo(map).openPopup();
 
@@ -406,33 +408,56 @@ function populateTable() {
   }
 }
 
-function makeChart(arr){
+function genRGB(){
+  var r = Math.floor((Math.random() * 130) + 120);
+  var g = Math.floor((Math.random() * 130) + 100);
+  var b = Math.floor((Math.random() * 130) + 100);
+
+  return 'rgba(' + r + ', ' + g + ', ' + b + ', 0.3)'
+}
+
+function makeChart(){
   var ctx = document.getElementById("myChart").getContext('2d');
-  var myChart = new Chart(ctx, {
-    type: 'bar',
+  if(myChart !== null){
+    myChart.destroy();
+  }
+  myChart = new Chart(ctx, {
+    type: $("input[name=chartSel]:checked").val(),
     data: {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
         label: '# of Reported Cases ',
-        data: [arr[2003], arr[2004], arr[2005], arr[2006], arr[2007],
-        arr[2008], arr[2009], arr[2010], arr[2011], arr[2012],
-        arr[2013], arr[2014], arr[2015], arr[2016]],
+        data: selectData1,
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB()
         ],
         borderColor: [
-          'rgba(255,99,132,1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB(),
+          genRGB()
         ],
         borderWidth: 1
       }]

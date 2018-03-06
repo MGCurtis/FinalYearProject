@@ -30,7 +30,7 @@
     <!--<button id="locateMe" onclick="heatmap();">Locate Me</button>
     <button id="findStation" onclick="findMyNearestGardaStation();">Find Nearest Garda Station</button>
     <button id="getRoute" onclick="getRoute();">Get Route</button>>-->
-    <div id="dropdowns">
+    <div id="dropdowns" class="selector">
       <select onChange=updateMapData() id="yearDd">
         <option value="" selected disabled hidden>Select Year</option>
         <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
@@ -48,6 +48,24 @@
         <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
         <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
       </select>
+    </div>
+
+    <div id="statSelect" class="selector">
+      <input type="radio" name="statSel" value="stat1" checked>Station 1
+      <input type="radio" name="statSel" value="stat2">Station 2
+      <br/>
+      <input type="radio" name="statSel" value="stat3">Station 3
+      <input type="radio" name="statSel" value="stat4">Station 4
+      <br/>
+      <input type="radio" name="statSel" value="stat5">Station 5
+    </div>
+
+    <div id="chartSelect" class="selector">
+      <input type="radio" name="chartSel" value="line" onchange="makeChart()" checked>Line Chart
+      <br/>
+      <input type="radio" name="chartSel" value="bar" onchange="makeChart()">Bar Chart
+      <br/>
+      <input type="radio" name="chartSel" value="pie" onchange="makeChart()">Pie Chart
     </div>
 </div>
 <div id="map"></div>
