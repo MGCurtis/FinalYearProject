@@ -106,6 +106,9 @@ var myChart = null;
 var selectNo = null;
 var openStation = null;
 var selectData1 = [];
+
+var extraSelectData = [];
+
 var comp = null;
 
 
@@ -249,6 +252,14 @@ function findMyNearestGardaStation(e) {
     var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
     dTable.rows[closestIndex].dispatchEvent(new Event("mousedown"));
     selectData1 = Object.values(allVals[closestIndex]);
+    for(var i = 0; i < extraAllVals.length; i++)
+    {
+      if(extraAllVals[i] != [])
+      {
+        extraSelectData[i] = Object.values(extraAllVals[i][closestIndex]);
+      }
+    }
+    console.log(extraSelectData);
     makeChart();
 }
 
@@ -442,12 +453,12 @@ function populateTable() {
   }
 }
 
-function genRGB(){
+function genRGB(a){
   var r = Math.floor((Math.random() * 130) + 120);
   var g = Math.floor((Math.random() * 130) + 100);
   var b = Math.floor((Math.random() * 130) + 100);
 
-  return 'rgba(' + r + ', ' + g + ', ' + b + ', 0.3)'
+  return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')'
 }
 
 function makeChart(){
@@ -455,60 +466,18 @@ function makeChart(){
   if(myChart !== null){
     myChart.destroy();
   }
-  myChart = new Chart(ctx, {
-    type: $("input[name=chartSel]:checked").val(),
-    data: {
-      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
-      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
-      datasets: [{
-        label: '# of Reported Cases ',
-        data: selectData1,
-        backgroundColor: [
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB()
-        ],
-        borderColor: [
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB(),
-          genRGB()
-        ],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero:true
-          }
-        }]
-      }
-    }
-  });
+  switch ($("input[name=chartSel]:checked").val()) {
+    case "pie":
+      makePie(ctx);
+      break;
+    case "line":
+      makeLine(ctx);
+      break;
+    case "bar":
+      makeBar(ctx);
+      break;
 
+  }
 }
 
 function extraMapData(n) {
@@ -576,4 +545,179 @@ function loadExtraData(n) {
       }
     });
     //setTimeout(heatmapStart(), 5000);
+}
+
+function makePie(ctx) {
+  myChart = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: '# of Reported Cases ',
+        data: selectData1,
+        backgroundColor: [
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3)
+        ],
+        borderColor: [
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3),
+          genRGB(0.3)
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  });
+}
+
+function makeBar(ctx) {
+  myChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: '# of Cases ',
+        data: selectData1,
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        data: extraSelectData[0],
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        data: extraSelectData[1],
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        data: extraSelectData[2],
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        data: extraSelectData[3],
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }],
+        xAxes: [{
+          stacked: true
+        }]
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false
+      }
+    }
+  });
+}
+
+function makeLine(ctx) {
+  myChart = new Chart(ctx, {
+      type: "line",
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: '# of Reported Cases ',
+        fill: false,
+        borderColor: genRGB(0.5),
+        data: selectData1
+      },
+      {
+        label: '# of Reported Cases ',
+        fill: false,
+        data: extraSelectData[0],
+        borderColor: genRGB(0.5),
+      },
+      {
+        label: '# of Reported Cases ',
+        fill: false,
+        data: extraSelectData[1],
+        borderColor: genRGB(0.5),
+      },
+      {
+        label: '# of Reported Cases ',
+        fill: false,
+        data: extraSelectData[2],
+        borderColor: genRGB(0.5),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        fill: false,
+        data: extraSelectData[3],
+        borderColor: genRGB(0.5),
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false
+      }
+    }
+  });
 }
