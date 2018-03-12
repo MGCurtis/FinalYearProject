@@ -98,6 +98,10 @@
   margin-left: 0.7%;
 }
 
+.leaflet-zoom-hide {
+  position: absolute!important;
+}
+
 input[value="crimes"] {
   margin-left: 10%;
 }

@@ -89,6 +89,7 @@ var vals = [];
 var allVals = [];
 var hmap = [];
 
+var extraStats = [];
 var extraVals = [];
 var extraAllVals = [];
 var extraHmap = [];
@@ -258,6 +259,11 @@ function changeComp() {
       document.getElementById("statSelect").style.display = "inline-block";
       document.getElementById("crimeSelect").style.display = "none";
       comp = "stations";
+      if(extraHeatmapLayer != []) {
+        for(var i = 0; i < extraHeatmapLayer.length; i++){
+          extraHeatmapLayer[i].setData({data:[]});
+        }
+      }
       console.log(comp);
       break;
     case "crimes":
@@ -523,6 +529,7 @@ function loadExtraData(n) {
 
         //console.log(stats);
         var newVals = values.map(val => (parseInt(val[extraYear[n]]) ));
+        //console.log(extraVals[n]);
         extraVals[n] = newVals;
         var newAllVals = values.map(function(val) {
           delete val.Name;
@@ -533,21 +540,23 @@ function loadExtraData(n) {
         });
         extraAllVals[n] = newAllVals;
         //console.log(vals);
-        maxVal = 0;
-        for(var i = 0; i < newVals.length; i++)
+        var newmaxVal = 0;
+        var newStats = stats;
+
+        for(var i = 0; i < newStats.length; i++)
         {
-          newVals[i].value = vals[i];
-          if(newVals[i] > maxVal){
-            maxVal = newVals[i];
+          newStats[i].value = newVals[i];
+          if(newVals[i] > newmaxVal){
+            newmaxVal = newVals[i];
           }
         }
 
-        //console.log(Math.max(vals));
+        console.log(newStats);
 
-        extraHmap[n] = {max: maxVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
+        extraHmap[n] = {max: newmaxVal, data: newStats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
 
-        console.log(extraVals[n]);
-        console.log(extraAllVals[n]);
+        //console.log(extraVals[n]);
+        //console.log(extraAllVals[n]);
         console.log(extraHmap[n]);
         //console.log(stats[0]);
         if(extraHeatmapLayer[n] == null){
