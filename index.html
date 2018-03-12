@@ -31,14 +31,14 @@
     <button id="findStation" onclick="findMyNearestGardaStation();">Find Nearest Garda Station</button>
     <button id="getRoute" onclick="getRoute();">Get Route</button>>-->
     <div id="dropdowns" class="selector">
-      <select onChange=updateMapData() id="yearDd">
+      <select onChange=updateMapData() id="yearDd" class="yearDd">
         <option value="" selected disabled hidden>Select Year</option>
         <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
         <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
         <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
       </select>
 
-      <select onChange=updateMapData() id="crimeDd">
+      <select onChange=updateMapData() id="crimeDd" class="crimeDd">
         <option value="" selected disabled hidden>Select Crime</option>
         <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
         <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
@@ -48,16 +48,94 @@
         <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
         <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
       </select>
+      <p>Compare multiple crimes or multiple stations</p>
+      <input type="radio" name="compSel" value="stations" onchange="changeComp()" checked> Stations
+      <input type="radio" name="compSel" value="crimes" onchange="changeComp()"> Crimes
     </div>
 
-    <div id="statSelect" class="selector">
-      <input type="radio" name="statSel" value="stat1" checked>Station 1
-      <input type="radio" name="statSel" value="stat2">Station 2
-      <br/>
-      <input type="radio" name="statSel" value="stat3">Station 3
-      <input type="radio" name="statSel" value="stat4">Station 4
-      <br/>
-      <input type="radio" name="statSel" value="stat5">Station 5
+    <div id="compSelect" class="selector">
+      <div id="statSelect" class="valSel">
+        <input type="radio" name="statSel" value="stat1" checked><label>Station 1</label>
+        <input type="radio" name="statSel" value="stat2"><label>Station 2</label> <br/>
+        <input type="radio" name="statSel" value="stat3"><label>Station 3</label>
+        <input type="radio" name="statSel" value="stat4"><label>Station 4</label> <br/>
+        <input type="radio" name="statSel" value="stat5"><label>Station 5</label>
+        <input type="radio" name="statSel" value="stat6"><label>Station 6</label>
+      </div>
+
+      <div id="crimeSelect" class="valSel">
+        <select onChange=updateMapData() id="yearDd2" class="yearDd">
+          <option value="" selected disabled hidden>Select Year</option>
+          <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
+          <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
+          <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
+        </select>
+
+        <select onChange=updateMapData() id="crimeDd2" class="crimeDd">
+          <option value="" selected disabled hidden>Select Crime</option>
+          <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
+          <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+          <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
+          <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
+          <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
+          <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
+          <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
+        </select>
+
+        <select onChange=updateMapData() id="yearDd3" class="yearDd">
+          <option value="" selected disabled hidden>Select Year</option>
+          <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
+          <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
+          <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
+        </select>
+
+        <select onChange=updateMapData() id="crimeDd3" class="crimeDd">
+          <option value="" selected disabled hidden>Select Crime</option>
+          <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
+          <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+          <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
+          <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
+          <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
+          <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
+          <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
+        </select>
+
+        <select onChange=updateMapData() id="yearDd4" class="yearDd">
+          <option value="" selected disabled hidden>Select Year</option>
+          <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
+          <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
+          <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
+        </select>
+
+        <select onChange=updateMapData() id="crimeDd4" class="crimeDd">
+          <option value="" selected disabled hidden>Select Crime</option>
+          <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
+          <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+          <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
+          <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
+          <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
+          <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
+          <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
+        </select>
+
+        <select onChange=updateMapData() id="yearDd5" class="yearDd">
+          <option value="" selected disabled hidden>Select Year</option>
+          <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
+          <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
+          <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
+        </select>
+
+        <select onChange=updateMapData() id="crimeDd5" class="crimeDd">
+          <option value="" selected disabled hidden>Select Crime</option>
+          <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
+          <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+          <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
+          <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
+          <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
+          <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
+          <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
+        </select>
+      </div>
     </div>
 
     <div id="chartSelect" class="selector">

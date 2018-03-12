@@ -241,6 +241,11 @@ function findMyNearestGardaStation(e) {
     makeChart();
 }
 
+function changeComp() {
+  var comp = $("input[name=compSel]:checked").val();
+  $("div[class=valSel]").toggle();
+}
+
 //Get route from user position to closest garda station
 // function getRoute() {
 //     route.setWaypoints([

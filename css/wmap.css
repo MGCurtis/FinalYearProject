@@ -33,17 +33,18 @@
   margin-bottom: 2%;
 }
 
-#yearDd{
-  width: 28%;
-  float:right;
-}
 
-#crimeDd{
-  width: 70%;
-  margin-left: 0.7%;
+
+#compSelect{
 }
 
 #statSelect{
+  width:inherit;
+}
+
+#crimeSelect{
+  width: inherit;
+  display: none;
 }
 
 #chartSelect{
@@ -77,6 +78,30 @@
   border-bottom: 1px solid black;
 }
 
+.selector select{
+  height: 15%;
+  margin-bottom: 5%;
+}
+
+.selector p{
+  height: 10%;
+  margin-bottom: 10%;
+}
+
+.yearDd{
+  width: 28%;
+  float:right;
+}
+
+.crimeDd{
+  width: 70%;
+  margin-left: 0.7%;
+}
+
+input[value="crimes"] {
+  margin-left: 10%;
+}
+
 input[name="statSel"] {
   margin: 5%;
 }
@@ -96,6 +121,12 @@ div{
   display: inline-block;
   margin: 0;
   padding: 0;
+}
+
+label{
+  font-size: 16px;
+  margin-right: 20px;
+  border
 }
 
 li {
