@@ -88,17 +88,28 @@ var stats = [];
 var vals = [];
 var allVals = [];
 var hmap = [];
+
+var extraVals = [];
+var extraAllVals = [];
+var extraHmap = [];
+
 var year = "";
 var crime = "";
+
+var extraYear = [];
+var extraCrime = [];
+
 var maxVal = 0;
 var selected = null;
 var myChart = null;
 var selectNo = null;
 var openStation = null;
 var selectData1 = [];
+var comp = null;
 
 
 var heatmapLayer = null;
+var extraHeatmapLayer = [];
 var cfg = {
   // radius should be small ONLY if scaleRadius is true (or small radius is intended)
   // if scaleRadius is false it will be the constant radius used in pixels
@@ -133,6 +144,7 @@ function onDeviceReady() {
     console.log("In onDeviceReady.");
     makeBasicMap();
     loadGardaStations();
+    changeComp();
 
     //Stalls phone app while re-adding layer, just for debugging on web browser
 
@@ -186,11 +198,9 @@ function updateMapData() {
   crime = document.getElementById("crimeDd").value;
   console.log(year);
   console.log(crime);
-  //$.when( loadData() ).done(heatmapStart());
   if(year != "" && crime != "")
   loadData();
 }
-
 
 //Function to locate the user's position, places a cursor at the point and pans and zooms to location
 function locateMe() {
@@ -243,7 +253,20 @@ function findMyNearestGardaStation(e) {
 
 function changeComp() {
   var comp = $("input[name=compSel]:checked").val();
-  $("div[class=valSel]").toggle();
+  switch (comp) {
+    case "stations":
+      document.getElementById("statSelect").style.display = "inline-block";
+      document.getElementById("crimeSelect").style.display = "none";
+      comp = "stations";
+      console.log(comp);
+      break;
+    case "crimes":
+      document.getElementById("statSelect").style.display = "none";
+      document.getElementById("crimeSelect").style.display = "inline-block";
+      comp = "crimes";
+      console.log(comp);
+      break;
+  }
 }
 
 //Get route from user position to closest garda station
@@ -480,4 +503,68 @@ function makeChart(){
     }
   });
 
+}
+
+function extraMapData(n) {
+  extraYear[n] = document.getElementById("yearDd" + n).value;
+  extraCrime[n] = document.getElementById("crimeDd" + n).value;
+  console.log(extraYear[n]);
+  console.log(extraCrime[n]);
+  if(extraYear[n] != "" && extraCrime[n] != "")
+  loadExtraData(n);
+}
+
+function loadExtraData(n) {
+  $.ajax({
+    dataType: "json",
+    url: "data/" + extraCrime[n] + ".json",
+    mimeType: "application/json",
+    success: function(values){
+
+        //console.log(stats);
+        var newVals = values.map(val => (parseInt(val[extraYear[n]]) ));
+        extraVals[n] = newVals;
+        var newAllVals = values.map(function(val) {
+          delete val.Name;
+          for(var i = 2003; i <= 2016; i++){
+            val[i] = parseInt(val[i]);
+          }
+          return val;
+        });
+        extraAllVals[n] = newAllVals;
+        //console.log(vals);
+        maxVal = 0;
+        for(var i = 0; i < newVals.length; i++)
+        {
+          newVals[i].value = vals[i];
+          if(newVals[i] > maxVal){
+            maxVal = newVals[i];
+          }
+        }
+
+        //console.log(Math.max(vals));
+
+        extraHmap[n] = {max: maxVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
+
+        console.log(extraVals[n]);
+        console.log(extraAllVals[n]);
+        console.log(extraHmap[n]);
+        //console.log(stats[0]);
+        if(extraHeatmapLayer[n] == null){
+          console.log("hello");
+          extraHeatmapLayer[n] = new HeatmapOverlay(cfg);
+          //lCtrl = L.control.layers(null).addTo(map);
+          map.addLayer(extraHeatmapLayer[n]);
+          lCtrl.addOverlay(extraHeatmapLayer[n], "Heatmap " + (n + 2));
+        }
+        extraHeatmapLayer[n].setData(extraHmap[n]);
+        //populateTable();
+
+        //makeChart();
+        //$("#dTable").selectable();
+        //console.log(hmap);
+        //alert(hmap[1].toSource())
+      }
+    });
+    //setTimeout(heatmapStart(), 5000);
 }

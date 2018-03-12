@@ -48,6 +48,7 @@
         <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
         <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
       </select>
+      <br/>
       <p>Compare multiple crimes or multiple stations</p>
       <input type="radio" name="compSel" value="stations" onchange="changeComp()" checked> Stations
       <input type="radio" name="compSel" value="crimes" onchange="changeComp()"> Crimes
@@ -64,14 +65,14 @@
       </div>
 
       <div id="crimeSelect" class="valSel">
-        <select onChange=updateMapData() id="yearDd2" class="yearDd">
+        <select onChange=extraMapData(0) id="yearDd0" class="yearDd">
           <option value="" selected disabled hidden>Select Year</option>
           <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
           <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
           <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
         </select>
 
-        <select onChange=updateMapData() id="crimeDd2" class="crimeDd">
+        <select onChange=extraMapData(0) id="crimeDd0" class="crimeDd">
           <option value="" selected disabled hidden>Select Crime</option>
           <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
           <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
@@ -82,14 +83,14 @@
           <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
         </select>
 
-        <select onChange=updateMapData() id="yearDd3" class="yearDd">
+        <select onChange=extraMapData(1) id="yearDd1" class="yearDd">
           <option value="" selected disabled hidden>Select Year</option>
           <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
           <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
           <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
         </select>
 
-        <select onChange=updateMapData() id="crimeDd3" class="crimeDd">
+        <select onChange=extraMapData(1) id="crimeDd1" class="crimeDd">
           <option value="" selected disabled hidden>Select Crime</option>
           <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
           <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
@@ -100,14 +101,14 @@
           <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
         </select>
 
-        <select onChange=updateMapData() id="yearDd4" class="yearDd">
+        <select onChange=extraMapData(2) id="yearDd2" class="yearDd">
           <option value="" selected disabled hidden>Select Year</option>
           <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
           <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
           <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
         </select>
 
-        <select onChange=updateMapData() id="crimeDd4" class="crimeDd">
+        <select onChange=extraMapData(2) id="crimeDd2" class="crimeDd">
           <option value="" selected disabled hidden>Select Crime</option>
           <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
           <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
@@ -118,14 +119,14 @@
           <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
         </select>
 
-        <select onChange=updateMapData() id="yearDd5" class="yearDd">
+        <select onChange=extraMapData(3) id="yearDd3" class="yearDd">
           <option value="" selected disabled hidden>Select Year</option>
           <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
           <option>2008</option><option>2009</option><option>2010</option><option>2011</option><option>2012</option>
           <option>2013</option><option>2014</option><option>2015</option><option>2016</option>
         </select>
 
-        <select onChange=updateMapData() id="crimeDd5" class="crimeDd">
+        <select onChange=extraMapData(3) id="crimeDd3" class="crimeDd">
           <option value="" selected disabled hidden>Select Crime</option>
           <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
           <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
