@@ -108,6 +108,11 @@ var openStation = null;
 var selectData1 = [];
 
 var extraSelectData = [];
+var extraSelected = [null, null, null, null, null];
+var extraOpenStation = [];
+var extraSelectedStat = [];
+var selectedIndex = null;
+var extraSelectNo = [];
 
 var comp = null;
 
@@ -149,6 +154,7 @@ function onDeviceReady() {
     makeBasicMap();
     loadGardaStations();
     changeComp();
+    $("input[name=statSel][value=main]").click();
 
     //Stalls phone app while re-adding layer, just for debugging on web browser
 
@@ -251,7 +257,16 @@ function findMyNearestGardaStation(e) {
     }
     var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
     dTable.rows[closestIndex].dispatchEvent(new Event("mousedown"));
-    selectData1 = Object.values(allVals[closestIndex]);
+
+    if(selectedIndex != null){
+      extraSelectedStat[selectedIndex] = Object.values(allVals[closestIndex]);
+      //console.log(extraSelectedStat[selectedIndex]);
+    }
+    else{
+      selectData1 = Object.values(allVals[closestIndex]);
+      console.log(selectedIndex);
+    }
+      //selectData1 = Object.values(allVals[closestIndex]);
     for(var i = 0; i < extraAllVals.length; i++)
     {
       if(extraAllVals[i] != [])
@@ -259,7 +274,7 @@ function findMyNearestGardaStation(e) {
         extraSelectData[i] = Object.values(extraAllVals[i][closestIndex]);
       }
     }
-    console.log(extraSelectData);
+    //console.log(extraSelectData);
     makeChart();
 }
 
@@ -283,6 +298,17 @@ function changeComp() {
       comp = "crimes";
       console.log(comp);
       break;
+  }
+}
+
+function changeStat() {
+  if($("input[name=statSel]:checked").val() != "main"){
+    selectedIndex = $("input[name=statSel]:checked").val();
+    console.log(selectedIndex);
+  }
+  else{
+    selectedIndex = null;
+    console.log(selectedIndex);
   }
 }
 
@@ -366,7 +392,6 @@ function loadData() {
         }
         heatmapLayer.setData(hmap);
         populateTable();
-        //makeChart();
         //$("#dTable").selectable();
         //console.log(hmap);
         //alert(hmap[1].toSource())
@@ -412,24 +437,53 @@ function populateTable() {
         //
 
         // 'clicked' color is set in tablelist.css.
-        if ( this.className !== 'clicked' ) {
-          // Clear previous selection
-          if ( selected !== null ) {
-              selected.className='';
-              markers[selected.rowIndex -1].remove();
+        if ( selectedIndex == null ) {
+          if ( this.className !== 'clicked' ) {
+            // Clear previous selection
+
+            if ( selected !== null ) {
+                selected.className='';
+                markers[selected.rowIndex -1].remove();
+            }
+
+            // Mark this row as selected
+            this.className='clicked';
+            selected = this;
+            selectNo = selected.rowIndex - 1;
+            openStation = markers[selectNo];
+            openStation.addTo(map).openPopup();
+
           }
-
-          // Mark this row as selected
-          this.className='clicked';
-          selected = this;
-          selectNo = selected.rowIndex - 1;
-          openStation = markers[selectNo];
-          openStation.addTo(map).openPopup();
-
+          else {
+            this.className='';
+            markers[selected.rowIndex -1].remove();
+            selected = null;
+          }
         }
         else {
-          this.className='';
-          selected = null;
+
+          if ( this.className !== 'clicked' ) {
+            // Clear previous selection
+
+            if ( extraSelected[selectedIndex] !== null ) {
+                extraSelected[selectedIndex].className='';
+                markers[extraSelected[selectedIndex].rowIndex - 1].remove();
+                console.log("not null");
+                console.log(extraSelected[selectedIndex].rowIndex);
+            }
+            // Mark this row as selected
+            this.className='clicked';
+            extraSelected[selectedIndex] = this;
+            //extraSelectNo[selectedIndex] = exSel.rowIndex - 1;
+            extraOpenStation[selectedIndex] = markers[extraSelected[selectedIndex].rowIndex - 1];
+            extraOpenStation[selectedIndex].addTo(map).openPopup();
+
+          }
+          else {
+            this.className='';
+            markers[extraSelected[selectedIndex].rowIndex - 1].remove();
+            extraSelected[selectedIndex] = null;
+          }
         }
 
         return true
@@ -471,10 +525,20 @@ function makeChart(){
       makePie(ctx);
       break;
     case "line":
-      makeLine(ctx);
+      if($("input[name=compSel]:checked").val() == "crimes") {
+        makeLineCrimes(ctx);
+      }
+      else{
+
+      }
       break;
     case "bar":
-      makeBar(ctx);
+      if($("input[name=compSel]:checked").val() == "crimes") {
+        makeBarCrimes(ctx);
+      }
+      else{
+
+      }
       break;
 
   }
@@ -538,7 +602,6 @@ function loadExtraData(n) {
         extraHeatmapLayer[n].setData(extraHmap[n]);
         //populateTable();
 
-        //makeChart();
         //$("#dTable").selectable();
         //console.log(hmap);
         //alert(hmap[1].toSource())
@@ -603,7 +666,7 @@ function makePie(ctx) {
   });
 }
 
-function makeBar(ctx) {
+function makeBarStations(ctx) {
   myChart = new Chart(ctx, {
     type: "bar",
     data: {
@@ -666,7 +729,126 @@ function makeBar(ctx) {
   });
 }
 
-function makeLine(ctx) {
+function makeBarCrimes(ctx) {
+  myChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: '# of Cases ',
+        data: selectData1,
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        data: extraSelectData[0],
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        data: extraSelectData[1],
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        data: extraSelectData[2],
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        data: extraSelectData[3],
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }],
+        xAxes: [{
+          stacked: true
+        }]
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false
+      }
+    }
+  });
+}
+
+function makeLineStations(ctx) {
+  myChart = new Chart(ctx, {
+      type: "line",
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: '# of Reported Cases ',
+        fill: false,
+        borderColor: genRGB(0.5),
+        data: selectData1
+      },
+      {
+        label: '# of Reported Cases ',
+        fill: false,
+        data: extraSelectData[0],
+        borderColor: genRGB(0.5),
+      },
+      {
+        label: '# of Reported Cases ',
+        fill: false,
+        data: extraSelectData[1],
+        borderColor: genRGB(0.5),
+      },
+      {
+        label: '# of Reported Cases ',
+        fill: false,
+        data: extraSelectData[2],
+        borderColor: genRGB(0.5),
+        borderWidth: 1
+      },
+      {
+        label: '# of Reported Cases ',
+        fill: false,
+        data: extraSelectData[3],
+        borderColor: genRGB(0.5),
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false
+      }
+    }
+  });
+}
+
+function makeLineCrimes(ctx) {
   myChart = new Chart(ctx, {
       type: "line",
     data: {
