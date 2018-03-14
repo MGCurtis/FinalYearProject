@@ -260,31 +260,6 @@ function findMyNearestGardaStation(e) {
     }
     var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
     dTable.rows[closestIndex].dispatchEvent(new Event("mousedown"));
-
-    if(selectedIndex != null){
-      extraSelectedStat[selectedIndex] = Object.values(allVals[closestIndex]);
-      //console.log(extraSelectedStat[selectedIndex]);
-      var tempIndex = selectedIndex;
-      tempIndex ++;
-      statName[tempIndex] = stats[closestIndex].name;
-      console.log(tempIndex);
-    }
-    else{
-      selectData1 = Object.values(allVals[closestIndex]);
-      statName[0] = stats[closestIndex].name;
-      console.log(selectedIndex);
-    }
-      //selectData1 = Object.values(allVals[closestIndex]);
-    for(var i = 0; i < extraAllVals.length; i++)
-    {
-      if(extraAllVals[i] != [])
-      {
-        extraSelectData[i] = Object.values(extraAllVals[i][closestIndex]);
-      }
-    }
-    console.log(statName);
-    //console.log(extraSelectData);
-    makeChart();
 }
 
 function changeComp() {
@@ -462,6 +437,22 @@ function populateTable() {
             openStation = markers[selectNo];
             openStation.addTo(map).openPopup();
 
+            selectData1 = Object.values(allVals[selectNo]);
+            console.log(selectData1);
+            statName[0] = stats[selectNo].name;
+            //console.log(selectedIndex);
+
+              //selectData1 = Object.values(allVals[closestIndex]);
+            for(var i = 0; i < extraAllVals.length; i++)
+            {
+              if(extraAllVals[i] != [])
+              {
+                extraSelectData[i] = Object.values(extraAllVals[i][selectNo]);
+              }
+            }
+            console.log(statName);
+            makeChart();
+
           }
           else {
             this.className='';
@@ -476,16 +467,24 @@ function populateTable() {
 
             if ( extraSelected[selectedIndex] !== null ) {
                 extraSelected[selectedIndex].className='';
-                markers[extraSelected[selectedIndex].rowIndex - 1].remove();
+                markers[extraSelectNo[selectedIndex]].remove();
                 console.log("not null");
                 console.log(extraSelected[selectedIndex].rowIndex);
             }
             // Mark this row as selected
             this.className='clicked';
             extraSelected[selectedIndex] = this;
-            //extraSelectNo[selectedIndex] = exSel.rowIndex - 1;
-            extraOpenStation[selectedIndex] = markers[extraSelected[selectedIndex].rowIndex - 1];
+            extraSelectNo[selectedIndex] = extraSelected[selectedIndex].rowIndex - 1;
+            extraOpenStation[selectedIndex] = markers[extraSelectNo[selectedIndex]];
             extraOpenStation[selectedIndex].addTo(map).openPopup();
+
+            extraSelectedStat[selectedIndex] = Object.values(allVals[extraSelectNo[selectedIndex]]);
+            //console.log(extraSelectedStat[selectedIndex]);
+            var tempIndex = selectedIndex;
+            tempIndex ++;
+            statName[tempIndex] = stats[extraSelectNo[selectedIndex]].name;
+
+            makeChart();
 
           }
           else {
