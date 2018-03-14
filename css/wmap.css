@@ -141,7 +141,7 @@
 .clear{
   width: 35%;
   margin-top: 5%;
-  margin-left: 5%;
+  margin-left: 9%;
 }
 
 .crimeClear{
@@ -154,15 +154,15 @@ input[value="crimes"] {
 }
 
 input[name="compSel"]{
-  margin: 2% 4.4% 5% 7%;
+  margin: 2% 4.4% 5% 10%;
 }
 
 input[name="statSel"] {
-  margin: 5% 5% 5% 7%;
+  margin: 5% 5% 5% 10%;
 }
 
 input[name="chartSel"] {
-  margin: 5%;
+  margin: 5% 5% 5% 10%;
 }
 
 body{

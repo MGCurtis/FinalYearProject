@@ -113,6 +113,7 @@ var extraOpenStation = [];
 var extraSelectedStat = [];
 var selectedIndex = null;
 var extraSelectNo = [];
+var statName = [];
 
 var comp = null;
 
@@ -263,9 +264,14 @@ function findMyNearestGardaStation(e) {
     if(selectedIndex != null){
       extraSelectedStat[selectedIndex] = Object.values(allVals[closestIndex]);
       //console.log(extraSelectedStat[selectedIndex]);
+      var tempIndex = selectedIndex;
+      tempIndex ++;
+      statName[tempIndex] = stats[closestIndex].name;
+      console.log(tempIndex);
     }
     else{
       selectData1 = Object.values(allVals[closestIndex]);
+      statName[0] = stats[closestIndex].name;
       console.log(selectedIndex);
     }
       //selectData1 = Object.values(allVals[closestIndex]);
@@ -276,6 +282,7 @@ function findMyNearestGardaStation(e) {
         extraSelectData[i] = Object.values(extraAllVals[i][closestIndex]);
       }
     }
+    console.log(statName);
     //console.log(extraSelectData);
     makeChart();
 }
@@ -531,7 +538,7 @@ function makeChart(){
         makeLineCrimes(ctx);
       }
       else{
-
+        makeLineStations(ctx);
       }
       break;
     case "bar":
@@ -539,7 +546,7 @@ function makeChart(){
         makeBarCrimes(ctx);
       }
       else{
-
+        makeBarStations
       }
       break;
 
@@ -682,7 +689,7 @@ function makeBarStations(ctx) {
         borderWidth: 1
       },
       {
-        label: '# of Reported Cases ',
+        label: '# of Cases in ' + extraSelectData[0].name,
         data: extraSelectData[0],
         backgroundColor: genRGB(0.3),
         borderColor: genRGB(0.3),
@@ -801,34 +808,46 @@ function makeLineStations(ctx) {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
-        label: '# of Reported Cases ',
+        label: '# of Cases in ' + statName[0],
         fill: false,
         borderColor: genRGB(0.5),
+        backgroundColor: genRGB(0.5),
         data: selectData1
       },
       {
-        label: '# of Reported Cases ',
+        label: '# of Cases in ' + statName[1],
         fill: false,
-        data: extraSelectData[0],
+        data: extraSelectedStat[0],
+        backgroundColor: genRGB(0.5),
         borderColor: genRGB(0.5),
       },
       {
-        label: '# of Reported Cases ',
+        label: '# of Cases in ' + statName[2],
         fill: false,
-        data: extraSelectData[1],
+        data: extraSelectedStat[1],
+        backgroundColor: genRGB(0.5),
         borderColor: genRGB(0.5),
       },
       {
-        label: '# of Reported Cases ',
+        label: '# of Cases in ' + statName[3],
         fill: false,
-        data: extraSelectData[2],
+        data: extraSelectedStat[2],
+        backgroundColor: genRGB(0.5),
         borderColor: genRGB(0.5),
         borderWidth: 1
       },
       {
-        label: '# of Reported Cases ',
+        label: '# of Cases in ' + statName[4],
         fill: false,
-        data: extraSelectData[3],
+        data: extraSelectedStat[3],
+        backgroundColor: genRGB(0.5),
+        borderColor: genRGB(0.5),
+      },
+      {
+        label: '# of Cases in ' + statName[5],
+        fill: false,
+        data: extraSelectedStat[4],
+        backgroundColor: genRGB(0.5),
         borderColor: genRGB(0.5),
       }]
     },
