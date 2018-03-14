@@ -208,8 +208,10 @@ function updateMapData() {
   crime = document.getElementById("crimeDd").value;
   console.log(year);
   console.log(crime);
-  if(year != "" && crime != "")
-  loadData();
+  if(year != "" && crime != ""){
+    loadData();
+    document.getElementById("data").innerHTML = "Number of " + $("#crimeDd option:selected").text() + " cases for the year " + $("#yearDd option:selected").text()
+  }
 }
 
 //Function to locate the user's position, places a cursor at the point and pans and zooms to location

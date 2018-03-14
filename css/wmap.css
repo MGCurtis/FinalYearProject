@@ -5,6 +5,15 @@
     background-color: #eee;
 }
 
+#data{
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #ddd,
+    1px -1px 0 #ddd,
+    -1px 1px 0 #ddd,
+    1px 1px 0 #ddd;
+}
+
 #map {
     height: 66%;
     width: 80.3%;
@@ -30,17 +39,34 @@
 }
 
 #dropdowns{
-  height: 30%;
+  height: 15%;
   margin-bottom: 2%;
 }
 
+#dropdowns select{
+  margin-bottom: 2%;
+}
 
+#crimeDd3{
+  margin-bottom: 0;
+}
+
+#compButtons{
+  height: 15%;
+  width: 100%;
+  border-bottom: 1px black solid;
+}
 
 #compSelect{
+  height: 40%;
 }
 
 #statSelect{
   width:inherit;
+}
+
+#statSelect p{
+  margin-bottom: 5%;
 }
 
 #crimeSelect{
@@ -48,8 +74,16 @@
   display: none;
 }
 
+#crimeSelect p{
+  margin-bottom: 5%;
+}
+
 #chartSelect{
   border-bottom: 0px;
+}
+
+#chartSelect p{
+  margin-bottom: 0;
 }
 
 #dTable .ui-selecting {
@@ -80,12 +114,13 @@
 }
 
 .selector select{
-  height: 15%;
+  height: 28px;
   margin-bottom: 5%;
 }
 
 .selector p{
   height: 10%;
+  margin-top: 0%;
   margin-bottom: 10%;
 }
 
@@ -103,12 +138,27 @@
   position: absolute!important;
 }
 
+.clear{
+  width: 35%;
+  margin-top: 5%;
+  margin-left: 5%;
+}
+
+.crimeClear{
+  margin-top: 3.5%;
+  margin-left: 37%;
+}
+
 input[value="crimes"] {
   margin-left: 10%;
 }
 
+input[name="compSel"]{
+  margin: 2% 4.4% 5% 7%;
+}
+
 input[name="statSel"] {
-  margin: 5%;
+  margin: 5% 5% 5% 7%;
 }
 
 input[name="chartSel"] {

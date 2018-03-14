@@ -48,23 +48,29 @@
         <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
         <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
       </select>
-      <br/>
-      <p>Compare multiple crimes or multiple stations</p>
-      <input type="radio" name="compSel" value="stations" onchange="changeComp()" checked> Stations
-      <input type="radio" name="compSel" value="crimes" onchange="changeComp()"> Crimes
+      <p id="data"></p>
+    </div>
+    <div id="compButtons" class="selector">
+      <p>Select whether to compare multiple crimes or multiple stations</p>
+      <input type="radio" name="compSel" value="stations" onchange="changeComp()" checked><label>Stations &nbsp</label>
+      <input type="radio" name="compSel" value="crimes" onchange="changeComp()"><label>Crimes</label>
     </div>
 
     <div id="compSelect" class="selector">
       <div id="statSelect" class="valSel">
+        <p>Click a button then select another station to compare</p>
         <input type="radio" name="statSel" value="main" onchange="changeStat()" checked><label>Station 1</label>
         <input type="radio" name="statSel" value="0" onchange="changeStat()"><label>Station 2</label> <br/>
         <input type="radio" name="statSel" value="1" onchange="changeStat()"><label>Station 3</label>
         <input type="radio" name="statSel" value="2" onchange="changeStat()"><label>Station 4</label> <br/>
         <input type="radio" name="statSel" value="3" onchange="changeStat()"><label>Station 5</label>
-        <input type="radio" name="statSel" value="4" onchange="changeStat()"><label>Station 6</label>
+        <input type="radio" name="statSel" value="4" onchange="changeStat()"><label>Station 6</label> <br/>
+        <button type="button" class="clear">Clear Selected</button>
+        <button type="button" class="clear">Clear All</button>
       </div>
 
       <div id="crimeSelect" class="valSel">
+        <p>Select other crimes to overlay on to map and compare in graphs</p>
         <select onChange=extraMapData(0) id="yearDd0" class="yearDd">
           <option value="" selected disabled hidden>Select Year</option>
           <option>2003</option><option>2004</option><option>2005</option><option>2006</option><option>2007</option>
@@ -136,10 +142,12 @@
           <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
           <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
         </select>
+        <button type="button" class="crimeClear">Clear All</button>
       </div>
     </div>
 
     <div id="chartSelect" class="selector">
+      <p>Select type of chart to be displayed</p>
       <input type="radio" name="chartSel" value="line" onchange="makeChart()" checked>Line Chart
       <br/>
       <input type="radio" name="chartSel" value="bar" onchange="makeChart()">Bar Chart
