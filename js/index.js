@@ -277,6 +277,7 @@ function changeComp() {
       console.log(comp);
       break;
     case "crimes":
+      $("input[name=statSel][value=main]").click();
       document.getElementById("statSelect").style.display = "none";
       document.getElementById("crimeSelect").style.display = "inline-block";
       comp = "crimes";
@@ -545,7 +546,7 @@ function makeChart(){
         makeBarCrimes(ctx);
       }
       else{
-        makeBarStations
+        makeBarStations(ctx);
       }
       break;
 
@@ -681,39 +682,46 @@ function makeBarStations(ctx) {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
-        label: '# of Cases ',
-        data: selectData1,
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
-        borderWidth: 1
+        label: '# of Cases in ' + statName[0],
+        fill: false,
+        borderColor: 'rgba(0, 0, 255, 0.5)',
+        backgroundColor: 'rgba(0, 0, 255, 0.5)',
+        data: selectData1
       },
       {
-        label: '# of Cases in ' + extraSelectData[0].name,
-        data: extraSelectData[0],
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
-        borderWidth: 1
+        label: '# of Cases in ' + statName[1],
+        fill: false,
+        data: extraSelectedStat[0],
+        borderColor: 'rgba(0, 150, 200, 0.5)',
+        backgroundColor: 'rgba(0, 150, 200, 0.5)'
       },
       {
-        label: '# of Reported Cases ',
-        data: extraSelectData[1],
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
-        borderWidth: 1
+        label: '# of Cases in ' + statName[2],
+        fill: false,
+        data: extraSelectedStat[1],
+        borderColor: 'rgba(0, 255, 0, 0.5)',
+        backgroundColor: 'rgba(0, 255, 0, 0.5)'
       },
       {
-        label: '# of Reported Cases ',
-        data: extraSelectData[2],
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
-        borderWidth: 1
+        label: '# of Cases in ' + statName[3],
+        fill: false,
+        data: extraSelectedStat[2],
+        borderColor: 'rgba(255, 0, 0, 0.5)',
+        backgroundColor: 'rgba(255, 0, 0, 0.5)'
       },
       {
-        label: '# of Reported Cases ',
-        data: extraSelectData[3],
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
-        borderWidth: 1
+        label: '# of Cases in ' + statName[4],
+        fill: false,
+        data: extraSelectedStat[3],
+        borderColor: 'rgba(255, 204, 0, 0.5)',
+        backgroundColor: 'rgba(255, 204, 0, 0.5)'
+      },
+      {
+        label: '# of Cases in ' + statName[5],
+        fill: false,
+        data: extraSelectedStat[4],
+        borderColor: 'rgba(204, 51, 153, 0.5)',
+        backgroundColor: 'rgba(204, 51, 153, 0.5)'
       }]
     },
     options: {
@@ -809,45 +817,44 @@ function makeLineStations(ctx) {
       datasets: [{
         label: '# of Cases in ' + statName[0],
         fill: false,
-        borderColor: genRGB(0.5),
-        backgroundColor: genRGB(0.5),
+        borderColor: 'rgba(0, 0, 255, 0.5)',
+        backgroundColor: 'rgba(0, 0, 255, 0.5)',
         data: selectData1
       },
       {
         label: '# of Cases in ' + statName[1],
         fill: false,
         data: extraSelectedStat[0],
-        backgroundColor: genRGB(0.5),
-        borderColor: genRGB(0.5),
+        borderColor: 'rgba(0, 150, 200, 0.5)',
+        backgroundColor: 'rgba(0, 150, 200, 0.5)'
       },
       {
         label: '# of Cases in ' + statName[2],
         fill: false,
         data: extraSelectedStat[1],
-        backgroundColor: genRGB(0.5),
-        borderColor: genRGB(0.5),
+        borderColor: 'rgba(0, 255, 0, 0.5)',
+        backgroundColor: 'rgba(0, 255, 0, 0.5)'
       },
       {
         label: '# of Cases in ' + statName[3],
         fill: false,
         data: extraSelectedStat[2],
-        backgroundColor: genRGB(0.5),
-        borderColor: genRGB(0.5),
-        borderWidth: 1
+        borderColor: 'rgba(255, 0, 0, 0.5)',
+        backgroundColor: 'rgba(255, 0, 0, 0.5)'
       },
       {
         label: '# of Cases in ' + statName[4],
         fill: false,
         data: extraSelectedStat[3],
-        backgroundColor: genRGB(0.5),
-        borderColor: genRGB(0.5),
+        borderColor: 'rgba(255, 204, 0, 0.5)',
+        backgroundColor: 'rgba(255, 204, 0, 0.5)'
       },
       {
         label: '# of Cases in ' + statName[5],
         fill: false,
         data: extraSelectedStat[4],
-        backgroundColor: genRGB(0.5),
-        borderColor: genRGB(0.5),
+        borderColor: 'rgba(204, 51, 153, 0.5)',
+        backgroundColor: 'rgba(204, 51, 153, 0.5)'
       }]
     },
     options: {
@@ -875,35 +882,39 @@ function makeLineCrimes(ctx) {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
-        label: '# of Reported Cases ',
+        label: $("#crimeDd option:selected").text(),
         fill: false,
-        borderColor: genRGB(0.5),
+        borderColor: 'rgba(0, 0, 255, 0.5)',
+        backgroundColor: 'rgba(0, 0, 255, 0.5)',
         data: selectData1
       },
       {
-        label: '# of Reported Cases ',
+        label: $("#crimeDd0 option:selected").text(),
         fill: false,
         data: extraSelectData[0],
-        borderColor: genRGB(0.5),
+        borderColor: 'rgba(0, 150, 200, 0.5)',
+        backgroundColor: 'rgba(0, 150, 200, 0.5)'
       },
       {
-        label: '# of Reported Cases ',
+        label: $("#crimeDd1 option:selected").text(),
         fill: false,
         data: extraSelectData[1],
-        borderColor: genRGB(0.5),
+        borderColor: 'rgba(0, 255, 0, 0.5)',
+        backgroundColor: 'rgba(0, 255, 0, 0.5)'
       },
       {
-        label: '# of Reported Cases ',
+        label: $("#crimeDd2 option:selected").text(),
         fill: false,
         data: extraSelectData[2],
-        borderColor: genRGB(0.5),
-        borderWidth: 1
+        borderColor: 'rgba(255, 0, 0, 0.5)',
+        backgroundColor: 'rgba(255, 0, 0, 0.5)'
       },
       {
-        label: '# of Reported Cases ',
+        label: $("#crimeDd3 option:selected").text(),
         fill: false,
         data: extraSelectData[3],
-        borderColor: genRGB(0.5),
+        borderColor: 'rgba(255, 204, 0, 0.5)',
+        backgroundColor: 'rgba(255, 204, 0, 0.5)'
       }]
     },
     options: {
