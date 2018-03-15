@@ -278,6 +278,7 @@ function changeComp() {
       break;
     case "crimes":
       $("input[name=statSel][value=main]").click();
+      clearExtraStations();
       document.getElementById("statSelect").style.display = "none";
       document.getElementById("crimeSelect").style.display = "inline-block";
       comp = "crimes";
@@ -395,7 +396,37 @@ function heatmapUpdate() {
   heatmapLayer.setData(hmap);
 }
 
+function clearSelectedStation() {
+  if (selectedIndex == null){
+    selected.className='';
+    markers[selectNo].remove();
+    selected = null;
+    selectData1 = null;
+    statName[0] = "";
+  }
+  else{
+    extraSelected[selectedIndex].className='';
+    markers[extraSelectNo[selectedIndex]].remove();
+    extraSelected[selectedIndex] = null;
+    extraSelectedStat[selectedIndex] = null;
+    statName[selectedIndex+1] = "";
+  }
+  makeChart();
+}
+
 function clearAllStations() {
+  if ( selectData1 !== null ) {
+    selected.className='';
+    markers[selectNo].remove();
+    selected = null;
+    selectData1 = null;
+    statName[0] = "";
+  }
+  clearExtraStations();
+  makeChart();
+}
+
+function clearExtraStations() {
   for(var i = 0; i < extraSelected.length; i++){
     if ( extraSelected[i] !== null ) {
       console.log("Hi");
@@ -407,7 +438,6 @@ function clearAllStations() {
       console.log(statName);
     }
   }
-  makeChart();
 }
 
 function populateTable() {
