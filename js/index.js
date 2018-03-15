@@ -113,7 +113,7 @@ var extraOpenStation = [];
 var extraSelectedStat = [];
 var selectedIndex = null;
 var extraSelectNo = [];
-var statName = [];
+var statName = ["", "", "", "", "", ""];
 
 var comp = null;
 
@@ -393,6 +393,21 @@ function heatmapStart() {
 
 function heatmapUpdate() {
   heatmapLayer.setData(hmap);
+}
+
+function clearAllStations() {
+  for(var i = 0; i < extraSelected.length; i++){
+    if ( extraSelected[i] !== null ) {
+      console.log("Hi");
+      extraSelected[i].className='';
+      markers[extraSelectNo[i]].remove();
+      extraSelected[i] = null;
+      extraSelectedStat[i] = null;
+      statName[i+1] = "";
+      console.log(statName);
+    }
+  }
+  makeChart();
 }
 
 function populateTable() {
