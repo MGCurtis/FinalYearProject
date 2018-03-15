@@ -269,11 +269,7 @@ function changeComp() {
       document.getElementById("statSelect").style.display = "inline-block";
       document.getElementById("crimeSelect").style.display = "none";
       comp = "stations";
-      if(extraHeatmapLayer != []) {
-        for(var i = 0; i < extraHeatmapLayer.length; i++){
-          extraHeatmapLayer[i].setData({data:[]});
-        }
-      }
+      clearCrimes();
       console.log(comp);
       break;
     case "crimes":
@@ -438,6 +434,16 @@ function clearExtraStations() {
       console.log(statName);
     }
   }
+}
+
+function clearCrimes() {
+  for(var i = 0; i < extraHeatmapLayer.length; i++){
+    extraHeatmapLayer[i].setData({data:[]});
+    extraSelectData[i] = null;
+    console.log("hi");
+  }
+  $(".extraDd").prop('selectedIndex', 0);
+  makeChart();
 }
 
 function populateTable() {
