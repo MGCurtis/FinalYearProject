@@ -266,10 +266,10 @@ function changeComp() {
   var comp = $("input[name=compSel]:checked").val();
   switch (comp) {
     case "stations":
+      clearCrimes();
       document.getElementById("statSelect").style.display = "inline-block";
       document.getElementById("crimeSelect").style.display = "none";
       comp = "stations";
-      clearCrimes();
       console.log(comp);
       break;
     case "crimes":
@@ -439,8 +439,9 @@ function clearExtraStations() {
 function clearCrimes() {
   for(var i = 0; i < extraHeatmapLayer.length; i++){
     extraHeatmapLayer[i].setData({data:[]});
+    //console.log(extraAllVals);
+    extraAllVals[i] = null;
     extraSelectData[i] = null;
-    console.log("hi");
   }
   $(".extraDd").prop('selectedIndex', 0);
   makeChart();
@@ -450,7 +451,6 @@ function populateTable() {
   var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
   if(dTable.rows.length <= 1){
     for(var i=0; i<stats.length; i++){
-      //console.log(stats[i]);
       var row = dTable.insertRow(dTable.rows.length);
 
       row.onmouseover=function(){
@@ -490,15 +490,15 @@ function populateTable() {
             openStation.addTo(map).openPopup();
 
             selectData1 = Object.values(allVals[selectNo]);
-            console.log(selectData1);
             statName[0] = stats[selectNo].name;
             //console.log(selectedIndex);
 
               //selectData1 = Object.values(allVals[closestIndex]);
             for(var i = 0; i < extraAllVals.length; i++)
             {
-              if(extraAllVals[i] != [])
+              if(extraAllVals[i] !== null)
               {
+                console.log("not null");
                 extraSelectData[i] = Object.values(extraAllVals[i][selectNo]);
               }
             }
@@ -520,8 +520,6 @@ function populateTable() {
             if ( extraSelected[selectedIndex] !== null ) {
                 extraSelected[selectedIndex].className='';
                 markers[extraSelectNo[selectedIndex]].remove();
-                console.log("not null");
-                console.log(extraSelected[selectedIndex].rowIndex);
             }
             // Mark this row as selected
             this.className='clicked';
@@ -531,7 +529,6 @@ function populateTable() {
             extraOpenStation[selectedIndex].addTo(map).openPopup();
 
             extraSelectedStat[selectedIndex] = Object.values(allVals[extraSelectNo[selectedIndex]]);
-            //console.log(extraSelectedStat[selectedIndex]);
             var tempIndex = selectedIndex;
             tempIndex ++;
             statName[tempIndex] = stats[extraSelectNo[selectedIndex]].name;
@@ -560,7 +557,6 @@ function populateTable() {
   }
   else{
     for(var i=0; i<stats.length; i++){
-      //console.log(stats[i]);
       dTable.rows[i].cells[2].innerHTML = stats[i].value;
       //cell3.innerHTML = stats[i].value;
     }
@@ -927,6 +923,7 @@ function makeLineStations(ctx) {
 }
 
 function makeLineCrimes(ctx) {
+  console.log(extraSelectData);
   myChart = new Chart(ctx, {
       type: "line",
     data: {
