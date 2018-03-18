@@ -41,7 +41,7 @@
       <select onChange=updateMapData() id="crimeDd" class="crimeDd">
         <option value="" selected disabled hidden>Select Crime</option>
         <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
-        <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+        <option value="dangacts">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
         <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
         <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
         <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
@@ -81,7 +81,7 @@
         <select onChange=extraMapData(0) id="crimeDd0" class="crimeDd extraDd">
           <option value="" selected disabled hidden>Select Crime</option>
           <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
-          <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+          <option value="dangacts">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
           <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
           <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
           <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
@@ -99,7 +99,7 @@
         <select onChange=extraMapData(1) id="crimeDd1" class="crimeDd extraDd">
           <option value="" selected disabled hidden>Select Crime</option>
           <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
-          <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+          <option value="dangacts">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
           <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
           <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
           <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
@@ -117,7 +117,7 @@
         <select onChange=extraMapData(2) id="crimeDd2" class="crimeDd extraDd">
           <option value="" selected disabled hidden>Select Crime</option>
           <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
-          <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+          <option value="dangacts">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
           <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
           <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
           <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
@@ -135,7 +135,7 @@
         <select onChange=extraMapData(3) id="crimeDd3" class="crimeDd extraDd">
           <option value="" selected disabled hidden>Select Crime</option>
           <option value="threats">Attempts/threats to murder, assaults, harassments and related offences</option>
-          <option value="dangActs">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
+          <option value="dangacts">Dangerous or negligent acts</option><option value="kidnap">Kidnapping and related offences</option>
           <option value="robbery">Robbery, extortion and hijacking offences</option><option value="burglary">Burglary and related offences</option>
           <option value="theft">Theft and related offences</option><option value="fraud">Fraud, deception and related offences</option>
           <option value="drugs">Controlled drug offences</option><option value="weapons">Weapons and Explosives Offences</option>
@@ -149,9 +149,10 @@
     <div id="chartSelect" class="selector">
       <p>Select type of chart to be displayed</p>
       <input type="radio" name="chartSel" value="line" onchange="makeChart()" checked>Line Chart
+      <input type="radio" name="chartSel" value="point" onchange="makeChart()" checked>Point Chart
       <br/>
       <input type="radio" name="chartSel" value="bar" onchange="makeChart()">Bar Chart
-      <input type="radio" name="chartSel" value="bar" onchange="makeChart()">Single Bar
+      <input type="radio" name="chartSel" value="barSing" onchange="makeChart()">Single Bar
       <br/>
       <input type="radio" name="chartSel" value="pie" onchange="makeChart()">Pie Chart
     </div>

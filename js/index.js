@@ -331,19 +331,20 @@ function loadGardaStations() {
 function loadData() {
   $.ajax({
     dataType: "json",
-    url: "data/" + crime + ".json",
+    url: "http://139.59.162.120/" + crime + "/",
     mimeType: "application/json",
     success: function(values){
 
-        //console.log(stats);
-        vals = values.map(val => (parseInt(val[year]) ));
+        vals = values.map(val => (parseInt(val["v" + year]) ));
         allVals = values.map(function(val) {
           delete val.Name;
           for(var i = 2003; i <= 2016; i++){
-            val[i] = parseInt(val[i]);
+            val["v" + i] = parseInt(val["v" + i]);
           }
           return val;
         });
+        console.log(allVals);
+
         //console.log(vals);
         maxVal = 0;
         for(var i = 0; i < stats.length; i++)
@@ -596,6 +597,18 @@ function makeChart(){
         makeBarStations(ctx);
       }
       break;
+    case "barSing":
+      makeBarSing(ctx);
+      break;
+
+    case "point":
+      if($("input[name=compSel]:checked").val() == "crimes") {
+        makePointCrime(ctx);
+      }
+      else{
+        makePointStations(ctx);
+      }
+      break;
 
   }
 }
@@ -612,18 +625,18 @@ function extraMapData(n) {
 function loadExtraData(n) {
   $.ajax({
     dataType: "json",
-    url: "data/" + extraCrime[n] + ".json",
+    url: "http://139.59.162.120/" + extraCrime[n] + "/",
     mimeType: "application/json",
     success: function(values){
 
         //console.log(stats);
-        var newVals = values.map(val => (parseInt(val[extraYear[n]]) ));
+        var newVals = values.map(val => (parseInt(val["v" + extraYear[n]]) ));
         //console.log(extraVals[n]);
         extraVals[n] = newVals;
         var newAllVals = values.map(function(val) {
           delete val.Name;
           for(var i = 2003; i <= 2016; i++){
-            val[i] = parseInt(val[i]);
+            val["v" + i] = parseInt(val["v" + i]);
           }
           return val;
         });
@@ -855,6 +868,41 @@ function makeBarCrimes(ctx) {
   });
 }
 
+function makeBarSing(ctx) {
+  myChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: '# of Cases in ' + statName[0],
+        data: selectData1,
+        backgroundColor: genRGB(0.3),
+        borderColor: genRGB(0.3),
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }],
+        xAxes: [{
+          stacked: true
+        }]
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false
+      }
+    }
+  });
+}
+
 function makeLineStations(ctx) {
   myChart = new Chart(ctx, {
       type: "line",
@@ -963,6 +1011,145 @@ function makeLineCrimes(ctx) {
         data: extraSelectData[3],
         borderColor: 'rgba(255, 204, 0, 0.5)',
         backgroundColor: 'rgba(255, 204, 0, 0.5)'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false
+      }
+    }
+  });
+}
+
+function makePointStations(ctx) {
+  myChart = new Chart(ctx, {
+      type: "line",
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: '# of Cases in ' + statName[0],
+        fill: false,
+        borderColor: 'rgba(0, 0, 255, 0.7)',
+        backgroundColor: 'rgba(0, 0, 255, 0.7)',
+        data: selectData1,
+        showLine: false
+      },
+      {
+        label: '# of Cases in ' + statName[1],
+        fill: false,
+        data: extraSelectedStat[0],
+        borderColor: 'rgba(0, 150, 200, 0.7)',
+        backgroundColor: 'rgba(0, 150, 200, 0.7)',
+        showLine: false
+      },
+      {
+        label: '# of Cases in ' + statName[2],
+        fill: false,
+        data: extraSelectedStat[1],
+        borderColor: 'rgba(0, 255, 0, 0.7)',
+        backgroundColor: 'rgba(0, 255, 0, 0.7)',
+        showLine: false
+      },
+      {
+        label: '# of Cases in ' + statName[3],
+        fill: false,
+        data: extraSelectedStat[2],
+        borderColor: 'rgba(255, 0, 0, 0.7)',
+        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+        showLine: false
+      },
+      {
+        label: '# of Cases in ' + statName[4],
+        fill: false,
+        data: extraSelectedStat[3],
+        borderColor: 'rgba(255, 204, 0, 0.7)',
+        backgroundColor: 'rgba(255, 204, 0, 0.7)',
+        showLine: false
+      },
+      {
+        label: '# of Cases in ' + statName[5],
+        fill: false,
+        data: extraSelectedStat[4],
+        borderColor: 'rgba(204, 51, 153, 0.7)',
+        backgroundColor: 'rgba(204, 51, 153, 0.7)',
+        showLine: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false
+      }
+    }
+  });
+}
+
+function makePointCrime(ctx) {
+  console.log(extraSelectData);
+  myChart = new Chart(ctx, {
+      type: "line",
+    data: {
+      labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
+      "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
+      datasets: [{
+        label: $("#crimeDd option:selected").text(),
+        fill: false,
+        borderColor: 'rgba(0, 0, 255, 0.7)',
+        backgroundColor: 'rgba(0, 0, 255, 0.7)',
+        data: selectData1,
+        showLine: false
+      },
+      {
+        label: $("#crimeDd0 option:selected").text(),
+        fill: false,
+        data: extraSelectData[0],
+        borderColor: 'rgba(0, 150, 200, 0.7)',
+        backgroundColor: 'rgba(0, 150, 200, 0.7)',
+        showLine: false
+      },
+      {
+        label: $("#crimeDd1 option:selected").text(),
+        fill: false,
+        data: extraSelectData[1],
+        borderColor: 'rgba(0, 255, 0, 0.7)',
+        backgroundColor: 'rgba(0, 255, 0, 0.7)',
+        showLine: false
+      },
+      {
+        label: $("#crimeDd2 option:selected").text(),
+        fill: false,
+        data: extraSelectData[2],
+        borderColor: 'rgba(255, 0, 0, 0.7)',
+        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+        showLine: false
+      },
+      {
+        label: $("#crimeDd3 option:selected").text(),
+        fill: false,
+        data: extraSelectData[3],
+        borderColor: 'rgba(255, 204, 0, 0.7)',
+        backgroundColor: 'rgba(255, 204, 0, 0.7)',
+        showLine: false
       }]
     },
     options: {
