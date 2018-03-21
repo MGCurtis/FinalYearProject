@@ -77,9 +77,7 @@ var markerLayer;
 var removed = false;
 //Var for storing the user marker
 var user;
-//Var for storing the route control
-//var route;
-//Made the closest index var public so that I could have seperate buttons for find closest station and get route
+
 var closestIndex;
 
 var lCtrl;
@@ -100,12 +98,11 @@ var crime = "";
 var extraYear = [];
 var extraCrime = [];
 
-var maxVal = 0;
 var selected = null;
 var myChart = null;
 var selectNo = null;
 var openStation = null;
-var selectData1 = [];
+var selectData = [];
 
 var extraSelectData = [];
 var extraSelected = [null, null, null, null, null];
@@ -202,7 +199,29 @@ function makeBasicMap() {
 	map.addLayer(mapLayer);
 
 
+  L.control.heading({ position: 'topleft' }).addTo(map);
+  L.control.zoom({
+    position: 'topright'
+  }).addTo(map);
+
 }
+
+L.control.Heading = L.Control.extend({
+  onAdd: function(map){
+    var p = L.DomUtil.create('p', 'heading');
+    return p;
+  },
+
+  onRemove: function(map){
+
+  }
+})
+
+L.control.heading = function(opts) {
+  return new L.control.Heading(opts);
+}
+
+
 
 function updateMapData() {
   year = document.getElementById("yearDd").value;
@@ -211,36 +230,8 @@ function updateMapData() {
   console.log(crime);
   if(year != "" && crime != ""){
     loadData();
-    document.getElementById("data").innerHTML = "Number of " + $("#crimeDd option:selected").text() + " cases for the year " + $("#yearDd option:selected").text()
+    document.getElementById("map").getElementsByClassName("heading")[0].innerHTML = "Number of " + $("#crimeDd option:selected").text() + " cases for the year " + $("#yearDd option:selected").text()
   }
-}
-
-//Function to locate the user's position, places a cursor at the point and pans and zooms to location
-function locateMe() {
-    console.log("In locateMe");
-    map.locate();
-
-    function onLocationFound(e) {
-        if(map.hasLayer(user))
-            map.removeLayer(user);
-
-        var radius = e.accuracy / 2;
-        userLoc = e.latlng;
-        console.log(userLoc);
-        map.flyTo(e.latlng, 15);
-        user = L.marker(e.latlng, {icon: userIcon, draggable: true}).addTo(map)
-            .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-        L.circle(e.latlng, radius).addTo(map);
-    }
-
-    map.on('locationfound', onLocationFound);
-
-    function onLocationError(e) {
-        alert(e.message);
-    }
-
-    map.on('locationerror', onLocationError);
 }
 
 //Loops through marker array, if distance of current index's marker from user marker is shorter
@@ -294,15 +285,6 @@ function changeStat() {
   }
 }
 
-//Get route from user position to closest garda station
-// function getRoute() {
-//     route.setWaypoints([
-//         user.getLatLng(),
-//         markers[closestIndex].getLatLng()
-//     ])
-// }
-
-
 //Makes ajax call to django application, receives json and creates a marker for every object in the json from lat and lon
 //Binds a popup to each marker with the name, address, county, and phone number for the station
 //Adds each marker to the markers array
@@ -335,52 +317,60 @@ function loadData() {
     mimeType: "application/json",
     success: function(values){
 
-        vals = values.map(val => (parseInt(val["v" + year]) ));
-        allVals = values.map(function(val) {
-          delete val.Name;
-          for(var i = 2003; i <= 2016; i++){
-            val["v" + i] = parseInt(val["v" + i]);
-          }
-          return val;
-        });
-        console.log(allVals);
+      var maxVal = 0;
+      var maxAllVal = 0;
 
-        //console.log(vals);
-        maxVal = 0;
-        for(var i = 0; i < stats.length; i++)
-        {
-          stats[i].value = vals[i];
-          if(vals[i] > maxVal){
-            maxVal = vals[i];
-          }
+      vals = values.map(val => (parseInt(val["v" + year]) ));
+      allVals = values.map(function(val) {
+        delete val.Name;
+        for(var i = 2003; i <= 2016; i++){
+          val["v" + i] = parseInt(val["v" + i]);
+          if(val["v" + i] > maxAllVal){
+            maxAllVal = val["v" + i];
+          };
         }
+        return val;
+      });
+      console.log(maxAllVal);
 
-        //console.log(Math.max(vals));
 
-        for(var i = 0; i < stats.length; i++)
-        {
-            markers[i].bindPopup("<b>" + stats[i].name + " Garda Station</b>"
-                + "<br>County: " + stats[i].county + "<br>Reported Cases: " + stats[i].value);
+      //console.log(vals);
+      for(var i = 0; i < stats.length; i++)
+      {
+        stats[i].value = vals[i];
+        if(vals[i] > maxVal){
+          maxVal = vals[i];
         }
-
-        hmap = {max: maxVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
-
-        //HMAP NOT UPDATING¬!!!!
-        //console.log(stats[0]);
-        if(heatmapLayer == null){
-          heatmapLayer = new HeatmapOverlay(cfg);
-          lCtrl = L.control.layers(null).addTo(map);
-          map.addLayer(heatmapLayer);
-          lCtrl.addOverlay(heatmapLayer, "Heatmap");
-        }
-        heatmapLayer.setData(hmap);
-        populateTable();
-        //$("#dTable").selectable();
-        //console.log(hmap);
-        //alert(hmap[1].toSource())
       }
-    });
-    //setTimeout(heatmapStart(), 5000);
+
+
+      //console.log(Math.max(vals));
+
+      for(var i = 0; i < stats.length; i++)
+      {
+          markers[i].bindPopup("<b>" + stats[i].name + " Garda Station</b>"
+              + "<br>County: " + stats[i].county + "<br>Reported Cases: " + stats[i].value);
+      }
+      if($("input[name=max]").is(":checked")) {
+        hmap = {max: maxAllVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
+
+      }
+      else {
+        hmap = {max: maxVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
+      }
+
+      if(heatmapLayer == null){
+        heatmapLayer = new HeatmapOverlay(cfg);
+        lCtrl = L.control.layers(null).addTo(map);
+        map.addLayer(heatmapLayer);
+        lCtrl.addOverlay(heatmapLayer, "Heatmap");
+        $("input[name=max]").prop('disabled', false);
+
+      }
+      heatmapLayer.setData(hmap);
+      populateTable();
+    }
+  });
 }
 
 function heatmapStart() {
@@ -393,12 +383,23 @@ function heatmapUpdate() {
   heatmapLayer.setData(hmap);
 }
 
+function clearMainCrimes() {
+  heatmapLayer.setData({data:[]});
+  //console.log(extraAllVals);
+  allVals = null;
+  selectData = null;
+
+  $("#yearDd").prop('selectedIndex', 0);
+  $("#crimeDd").prop('selectedIndex', 0);
+  makeChart();
+}
+
 function clearSelectedStation() {
   if (selectedIndex == null){
     selected.className='';
     markers[selectNo].remove();
     selected = null;
-    selectData1 = null;
+    selectData = null;
     statName[0] = "";
   }
   else{
@@ -412,11 +413,11 @@ function clearSelectedStation() {
 }
 
 function clearAllStations() {
-  if ( selectData1 !== null ) {
+  if ( selectData !== null ) {
     selected.className='';
     markers[selectNo].remove();
     selected = null;
-    selectData1 = null;
+    selectData = null;
     statName[0] = "";
   }
   clearExtraStations();
@@ -489,12 +490,13 @@ function populateTable() {
             selectNo = selected.rowIndex - 1;
             openStation = markers[selectNo];
             openStation.addTo(map).openPopup();
+            map.panTo(openStation.getLatLng());
 
-            selectData1 = Object.values(allVals[selectNo]);
+            selectData = Object.values(allVals[selectNo]);
             statName[0] = stats[selectNo].name;
             //console.log(selectedIndex);
 
-              //selectData1 = Object.values(allVals[closestIndex]);
+              //selectData = Object.values(allVals[closestIndex]);
             for(var i = 0; i < extraAllVals.length; i++)
             {
               if(extraAllVals[i] !== null)
@@ -687,7 +689,7 @@ function makePie(ctx) {
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
         label: '# of Reported Cases ',
-        data: selectData1,
+        data: selectData,
         backgroundColor: [
           genRGB(0.3),
           genRGB(0.3),
@@ -746,7 +748,7 @@ function makeBarStations(ctx) {
         fill: false,
         borderColor: 'rgba(0, 0, 255, 0.5)',
         backgroundColor: 'rgba(0, 0, 255, 0.5)',
-        data: selectData1
+        data: selectData
       },
       {
         label: '# of Cases in ' + statName[1],
@@ -813,7 +815,7 @@ function makeBarCrimes(ctx) {
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
         label: '# of Cases ',
-        data: selectData1,
+        data: selectData,
         backgroundColor: genRGB(0.3),
         borderColor: genRGB(0.3),
         borderWidth: 1
@@ -876,7 +878,7 @@ function makeBarSing(ctx) {
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
         label: '# of Cases in ' + statName[0],
-        data: selectData1,
+        data: selectData,
         backgroundColor: genRGB(0.3),
         borderColor: genRGB(0.3),
         borderWidth: 1
@@ -914,7 +916,7 @@ function makeLineStations(ctx) {
         fill: false,
         borderColor: 'rgba(0, 0, 255, 0.5)',
         backgroundColor: 'rgba(0, 0, 255, 0.5)',
-        data: selectData1
+        data: selectData
       },
       {
         label: '# of Cases in ' + statName[1],
@@ -982,7 +984,7 @@ function makeLineCrimes(ctx) {
         fill: false,
         borderColor: 'rgba(0, 0, 255, 0.5)',
         backgroundColor: 'rgba(0, 0, 255, 0.5)',
-        data: selectData1
+        data: selectData
       },
       {
         label: $("#crimeDd0 option:selected").text(),
@@ -1042,7 +1044,7 @@ function makePointStations(ctx) {
         fill: false,
         borderColor: 'rgba(0, 0, 255, 0.7)',
         backgroundColor: 'rgba(0, 0, 255, 0.7)',
-        data: selectData1,
+        data: selectData,
         showLine: false
       },
       {
@@ -1116,7 +1118,7 @@ function makePointCrime(ctx) {
         fill: false,
         borderColor: 'rgba(0, 0, 255, 0.7)',
         backgroundColor: 'rgba(0, 0, 255, 0.7)',
-        data: selectData1,
+        data: selectData,
         showLine: false
       },
       {

@@ -3,16 +3,14 @@
     <meta charset=utf-8 />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <title>Leaflet test</title>
+    <title>Crime Data Visualization</title>
 
     <link rel="stylesheet" href="downloads/leaflet-1.2.0/leaflet.css">
     <link rel="stylesheet" type="text/css" href="downloads/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="downloads/leaflet.extramarkers/css/leaflet.extra-markers.min.css">
     <link rel="stylesheet" type="text/css" href="css/wmap.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 
     <script src="downloads/leaflet-1.2.0/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
     <script src="downloads/leaflet.extramarkers/js/leaflet.extra-markers.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -48,7 +46,11 @@
         <option value="property">Damage to property and to the environment</option><option value="social">Public order and other social code offences</option>
         <option value="govmnt">Offences against government, justice procedures and organisation of crime</option>
       </select>
-      <p id="data"></p>
+
+      <button id="clearMain" onclick="clearMainCrimes()">Clear</button>
+      <div class="check">
+        <input type="checkbox" name="max" onchange="loadData()" disabled><label>Use max. number of cases across all years</label>
+      </div>
     </div>
     <div id="compButtons" class="selector">
       <p>Select whether to compare multiple crimes or multiple stations</p>
@@ -149,7 +151,7 @@
     <div id="chartSelect" class="selector">
       <p>Select type of chart to be displayed</p>
       <input type="radio" name="chartSel" value="line" onchange="makeChart()" checked>Line Chart
-      <input type="radio" name="chartSel" value="point" onchange="makeChart()" checked>Point Chart
+      <input type="radio" name="chartSel" value="point" onchange="makeChart()">Point Chart
       <br/>
       <input type="radio" name="chartSel" value="bar" onchange="makeChart()">Bar Chart
       <input type="radio" name="chartSel" value="barSing" onchange="makeChart()">Single Bar

@@ -47,6 +47,22 @@
   margin-bottom: 2%;
 }
 
+#dropdowns button{
+  margin-top: 5%;
+  margin-left: 10%;
+}
+
+#dropdowns input{
+  margin-top: 11%;
+}
+
+#dropdowns label{
+  float: right;
+  margin-top: 6%;
+  font-size: 14px;
+  width: 70%;
+}
+
 #crimeDd3{
   margin-bottom: 0;
 }
@@ -107,6 +123,11 @@
 
 .map-marker.marker-color-gray {background: darkblue;}
 
+.check{
+  float: right;
+  width: 60%;
+}
+
 .selector{
   height: 33.3%;
   width: 100%;
@@ -147,6 +168,16 @@
 .crimeClear{
   margin-top: 3.5%;
   margin-left: 37%;
+}
+
+.heading{
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow:
+    -1px -1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px 1px 0 #fff,
+    1px 1px 0 #fff;
 }
 
 input[value="crimes"] {
