@@ -154,15 +154,7 @@ function onDeviceReady() {
     changeComp();
     $("input[name=statSel][value=main]").click();
 
-    //Stalls phone app while re-adding layer, just for debugging on web browser
-
-    //Zooming would sometimes crash in Firefox browser with markers displayed so now layer is removed at the start
-    //of a zoom and re-added at the end of a zoom.
     map.on("zoomstart", function(){
-        //Upon implementation I realised that zooming would now always add the layer
-        //But wrapping the 2 on zoom functions was too slow and the zoom would start and end before either could trigger
-        //So now it checks if it has the layer and marks a boolean that it had to remove it when starting zoom
-        //Then re-adds at the end of the zoom if this boolean is true and changes the boolean back to false
         if(map.hasLayer(markerLayer)){
             removed = !removed;
             map.removeLayer(markerLayer);
@@ -199,7 +191,7 @@ function makeBasicMap() {
 	map.addLayer(mapLayer);
 
 
-  L.control.heading({ position: 'topleft' }).addTo(map);
+  L.control.heading({ position: 'bottomleft' }).addTo(map);
   L.control.zoom({
     position: 'topright'
   }).addTo(map);
@@ -270,6 +262,7 @@ function changeComp() {
       document.getElementById("crimeSelect").style.display = "inline-block";
       comp = "crimes";
       console.log(comp);
+      makeChart();
       break;
   }
 }
@@ -449,6 +442,13 @@ function clearCrimes() {
   makeChart();
 }
 
+function hideHeatmaps() {
+  for(var i = 0; i < extraHeatmapLayer.length; i++){
+    if(map.hasLayer(extraHeatmapLayer[i]))
+      map.removeLayer(extraHeatmapLayer[i]);
+  }
+}
+
 function populateTable() {
   var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
   if(dTable.rows.length <= 1){
@@ -530,6 +530,8 @@ function populateTable() {
             extraSelectNo[selectedIndex] = extraSelected[selectedIndex].rowIndex - 1;
             extraOpenStation[selectedIndex] = markers[extraSelectNo[selectedIndex]];
             extraOpenStation[selectedIndex].addTo(map).openPopup();
+            map.panTo(extraOpenStation[selectedIndex].getLatLng());
+
 
             extraSelectedStat[selectedIndex] = Object.values(allVals[extraSelectNo[selectedIndex]]);
             var tempIndex = selectedIndex;
@@ -631,54 +633,63 @@ function loadExtraData(n) {
     mimeType: "application/json",
     success: function(values){
 
-        //console.log(stats);
-        var newVals = values.map(val => (parseInt(val["v" + extraYear[n]]) ));
-        //console.log(extraVals[n]);
-        extraVals[n] = newVals;
-        var newAllVals = values.map(function(val) {
-          delete val.Name;
-          for(var i = 2003; i <= 2016; i++){
-            val["v" + i] = parseInt(val["v" + i]);
-          }
-          return val;
-        });
-        extraAllVals[n] = newAllVals;
-        //console.log(vals);
-        var newmaxVal = 0;
-        var newStats = stats;
-
-        for(var i = 0; i < newStats.length; i++)
-        {
-          newStats[i].value = newVals[i];
-          if(newVals[i] > newmaxVal){
-            newmaxVal = newVals[i];
-          }
+      var newMaxAllVal = 0;
+      //console.log(stats);
+      var newVals = values.map(val => (parseInt(val["v" + extraYear[n]]) ));
+      //console.log(extraVals[n]);
+      extraVals[n] = newVals;
+      var newAllVals = values.map(function(val) {
+        delete val.Name;
+        for(var i = 2003; i <= 2016; i++){
+          val["v" + i] = parseInt(val["v" + i]);
+          if(val["v" + i] > newMaxAllVal){
+            newMaxAllVal = val["v" + i];
+          };
         }
+        return val;
+      });
 
-        console.log(newStats);
+      extraAllVals[n] = newAllVals;
+      //console.log(vals);
+      var newmaxVal = 0;
+      var newStats = stats;
 
-        extraHmap[n] = {max: newmaxVal, data: newStats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
-
-        //console.log(extraVals[n]);
-        //console.log(extraAllVals[n]);
-        console.log(extraHmap[n]);
-        //console.log(stats[0]);
-        if(extraHeatmapLayer[n] == null){
-          console.log("hello");
-          extraHeatmapLayer[n] = new HeatmapOverlay(cfg);
-          //lCtrl = L.control.layers(null).addTo(map);
-          map.addLayer(extraHeatmapLayer[n]);
-          lCtrl.addOverlay(extraHeatmapLayer[n], "Heatmap " + (n + 2));
+      for(var i = 0; i < newStats.length; i++)
+      {
+        newStats[i].value = newVals[i];
+        if(newVals[i] > newmaxVal){
+          newmaxVal = newVals[i];
         }
-        extraHeatmapLayer[n].setData(extraHmap[n]);
-        //populateTable();
-
-        //$("#dTable").selectable();
-        //console.log(hmap);
-        //alert(hmap[1].toSource())
       }
-    });
-    //setTimeout(heatmapStart(), 5000);
+
+      console.log(newStats);
+
+      if($("input[name=max]").is(":checked")) {
+        extraHmap[n] = {max: newMaxAllVal, data: newStats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
+      }
+      else {
+        extraHmap[n] = {max: newmaxVal, data: newStats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
+      }
+      //console.log(extraVals[n]);
+      //console.log(extraAllVals[n]);
+      console.log(extraHmap[n]);
+      //console.log(stats[0]);
+      if(extraHeatmapLayer[n] == null){
+        console.log("hello");
+        extraHeatmapLayer[n] = new HeatmapOverlay(cfg);
+        //lCtrl = L.control.layers(null).addTo(map);
+        map.addLayer(extraHeatmapLayer[n]);
+        lCtrl.addOverlay(extraHeatmapLayer[n], "Heatmap " + (n + 2));
+      }
+      extraHeatmapLayer[n].setData(extraHmap[n]);
+      //populateTable();
+
+      //$("#dTable").selectable();
+      //console.log(hmap);
+      //alert(hmap[1].toSource())
+    }
+  });
+  //setTimeout(heatmapStart(), 5000);
 }
 
 function makePie(ctx) {
@@ -691,34 +702,34 @@ function makePie(ctx) {
         label: '# of Reported Cases ',
         data: selectData,
         backgroundColor: [
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3)
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6)
         ],
         borderColor: [
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3),
-          genRGB(0.3)
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6),
+          genRGB(0.6)
         ],
         borderWidth: 1
       }]
@@ -795,9 +806,9 @@ function makeBarStations(ctx) {
             beginAtZero:true
           }
         }],
-        xAxes: [{
-          stacked: true
-        }]
+        // xAxes: [{
+        //   stacked: true
+        // }]
       },
       tooltips: {
         mode: "index",
@@ -816,36 +827,36 @@ function makeBarCrimes(ctx) {
       datasets: [{
         label: '# of Cases ',
         data: selectData,
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
+        backgroundColor: 'rgba(0, 0, 255, 0.5)',
+        borderColor: 'rgba(0, 0, 255, 0.5)',
         borderWidth: 1
       },
       {
         label: '# of Reported Cases ',
         data: extraSelectData[0],
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
+        backgroundColor: 'rgba(0, 150, 200, 0.5)',
+        borderColor: 'rgba(0, 150, 200, 0.5)',
         borderWidth: 1
       },
       {
         label: '# of Reported Cases ',
         data: extraSelectData[1],
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
+        backgroundColor: 'rgba(0, 255, 0, 0.5)',
+        borderColor: 'rgba(0, 255, 0, 0.5)',
         borderWidth: 1
       },
       {
         label: '# of Reported Cases ',
         data: extraSelectData[2],
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
+        backgroundColor: 'rgba(255, 0, 0, 0.5)',
+        borderColor: 'rgba(255, 0, 0, 0.5)',
         borderWidth: 1
       },
       {
         label: '# of Reported Cases ',
         data: extraSelectData[3],
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
+        backgroundColor: 'rgba(255, 204, 0, 0.5)',
+        borderColor: 'rgba(255, 204, 0, 0.5)',
         borderWidth: 1
       }]
     },
@@ -858,9 +869,9 @@ function makeBarCrimes(ctx) {
             beginAtZero:true
           }
         }],
-        xAxes: [{
-          stacked: true
-        }]
+        // xAxes: [{
+        //   stacked: true
+        // }]
       },
       tooltips: {
         mode: "index",
@@ -879,8 +890,8 @@ function makeBarSing(ctx) {
       datasets: [{
         label: '# of Cases in ' + statName[0],
         data: selectData,
-        backgroundColor: genRGB(0.3),
-        borderColor: genRGB(0.3),
+        backgroundColor: genRGB(0.7),
+        borderColor: genRGB(0.7),
         borderWidth: 1
       }]
     },
@@ -916,42 +927,48 @@ function makeLineStations(ctx) {
         fill: false,
         borderColor: 'rgba(0, 0, 255, 0.5)',
         backgroundColor: 'rgba(0, 0, 255, 0.5)',
-        data: selectData
+        data: selectData,
+        lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[1],
         fill: false,
         data: extraSelectedStat[0],
         borderColor: 'rgba(0, 150, 200, 0.5)',
-        backgroundColor: 'rgba(0, 150, 200, 0.5)'
+        backgroundColor: 'rgba(0, 150, 200, 0.5)',
+        lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[2],
         fill: false,
         data: extraSelectedStat[1],
         borderColor: 'rgba(0, 255, 0, 0.5)',
-        backgroundColor: 'rgba(0, 255, 0, 0.5)'
+        backgroundColor: 'rgba(0, 255, 0, 0.5)',
+        lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[3],
         fill: false,
         data: extraSelectedStat[2],
         borderColor: 'rgba(255, 0, 0, 0.5)',
-        backgroundColor: 'rgba(255, 0, 0, 0.5)'
+        backgroundColor: 'rgba(255, 0, 0, 0.5)',
+        lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[4],
         fill: false,
         data: extraSelectedStat[3],
         borderColor: 'rgba(255, 204, 0, 0.5)',
-        backgroundColor: 'rgba(255, 204, 0, 0.5)'
+        backgroundColor: 'rgba(255, 204, 0, 0.5)',
+        lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[5],
         fill: false,
         data: extraSelectedStat[4],
         borderColor: 'rgba(204, 51, 153, 0.5)',
-        backgroundColor: 'rgba(204, 51, 153, 0.5)'
+        backgroundColor: 'rgba(204, 51, 153, 0.5)',
+        lineTension: 0.2
       }]
     },
     options: {
@@ -984,35 +1001,40 @@ function makeLineCrimes(ctx) {
         fill: false,
         borderColor: 'rgba(0, 0, 255, 0.5)',
         backgroundColor: 'rgba(0, 0, 255, 0.5)',
-        data: selectData
+        data: selectData,
+        lineTension: 0.2
       },
       {
         label: $("#crimeDd0 option:selected").text(),
         fill: false,
         data: extraSelectData[0],
         borderColor: 'rgba(0, 150, 200, 0.5)',
-        backgroundColor: 'rgba(0, 150, 200, 0.5)'
+        backgroundColor: 'rgba(0, 150, 200, 0.5)',
+        lineTension: 0.2
       },
       {
         label: $("#crimeDd1 option:selected").text(),
         fill: false,
         data: extraSelectData[1],
         borderColor: 'rgba(0, 255, 0, 0.5)',
-        backgroundColor: 'rgba(0, 255, 0, 0.5)'
+        backgroundColor: 'rgba(0, 255, 0, 0.5)',
+        lineTension: 0.2
       },
       {
         label: $("#crimeDd2 option:selected").text(),
         fill: false,
         data: extraSelectData[2],
         borderColor: 'rgba(255, 0, 0, 0.5)',
-        backgroundColor: 'rgba(255, 0, 0, 0.5)'
+        backgroundColor: 'rgba(255, 0, 0, 0.5)',
+        lineTension: 0.2
       },
       {
         label: $("#crimeDd3 option:selected").text(),
         fill: false,
         data: extraSelectData[3],
         borderColor: 'rgba(255, 204, 0, 0.5)',
-        backgroundColor: 'rgba(255, 204, 0, 0.5)'
+        backgroundColor: 'rgba(255, 204, 0, 0.5)',
+        lineTension: 0.2
       }]
     },
     options: {

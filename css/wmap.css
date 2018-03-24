@@ -67,14 +67,26 @@
   margin-bottom: 0;
 }
 
+#yearDd3{
+  margin-bottom: 0;
+}
+
 #compButtons{
   height: 15%;
   width: 100%;
   border-bottom: 1px black solid;
 }
 
+#compButtons p{
+  text-align: center;
+}
+
 #compSelect{
   height: 40%;
+}
+
+#compSelect p{
+  text-align: center;
 }
 
 #statSelect{
@@ -100,6 +112,7 @@
 
 #chartSelect p{
   margin-bottom: 0;
+  text-align: center;
 }
 
 #dTable .ui-selecting {
@@ -167,7 +180,11 @@
 
 .crimeClear{
   margin-top: 3.5%;
-  margin-left: 37%;
+  margin-left: 9%;
+}
+
+.hideHeatmaps{
+  margin-left: 17%;
 }
 
 .heading{
