@@ -1,41 +1,90 @@
-#carContainer {
-  width:1550px;
+#carouselExampleIndicators {
+  width: 75%;
   margin: auto;
+  margin-bottom: 1%;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  height: 100px;
+  width: 100px;
+  background-image: none;
+}
+
+.carousel-control-next-icon:after
+{
+  content: '>';
+  font-size: 55px;
+  color: teal;
+  outline: black;
+}
+
+.carousel-control-prev-icon:after {
+  content: '<';
+  font-size: 55px;
+  color: teal;
 }
 
 .heading {
+  display: inline-block;
   width: 100%;
+  background-color: #343a40;
+  font-size: 30;
+  color: #fff;
+  padding-left: 25%;
+}
+
+.heading a {
+  float: right;
+  font-size: 20;
+  margin-right: 40%;
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+
+.heading a:link {
+  color: white;
+  background-color: #555;
+}
+
+.heading a:hover {
+  color: lightgrey;
+}
+
+.heading a:visited {
+  color: white;
+  background-color: #555;
+
+}
+
+.subHeading {
+  width: 66.7%;
   background-color: #343a40;
   font-size: 26;
   color: #fff;
-  padding-left: 15%;
+  margin-left: 16.65%;
+  padding-left: 10%;
+  margin-bottom: 0;
 }
 
 .text {
-  background-color: #ddd;
-  width: 33%;
-  border: 1px black solid;
-  display: inline-block;
-}
-
-.carousel-item {
-  height: 65vh;
-  min-height: 300px;
-  background: no-repeat center center scroll;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-}
-
-.jcarousel-wrapper {
-  overflow: auto;
+  background-color: #eee;
+  font-size: 20;
   width: 50%;
+  display: inline-block;
+  margin-left: 25%;
+  margin-bottom: 1%;
 }
 
-img {
-  
+.carousel-inner img {
+  margin: auto;
 }
+
+.app {
+  margin-left: 46%;
+  padding: 1%;
+}
+
 
 body {
     background-color:#eee;
@@ -60,8 +109,4 @@ h2 {
   padding:0px;
   text-align:center;
   margin: auto;
-}
-
-image {
-  padding-left: 50px;
 }

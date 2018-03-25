@@ -415,6 +415,7 @@ function clearAllStations() {
   }
   clearExtraStations();
   makeChart();
+  $("input[name=statSel][value=main]").click();
 }
 
 function clearExtraStations() {
@@ -702,22 +703,23 @@ function makePie(ctx) {
         label: '# of Reported Cases ',
         data: selectData,
         backgroundColor: [
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6)
+          'rgba(0, 0, 204, 0.5)',
+          'rgba(0, 102, 153, 0.5)',
+          'rgba(102, 153, 153, 0.5)',
+          'rgba(0, 204, 102, 0.5)',
+          'rgba(0, 153, 51, 0.5)',
+          'rgba(102, 153, 0, 0.5)',
+          'rgba(204, 204, 0, 0.5)',
+          'rgba(255, 153, 51, 0.5)',
+          'rgba(255, 0, 0, 0.5)',
+          'rgba(255, 0, 102, 0.5)',
+          'rgba(204, 0, 204, 0.5)',
+          'rgba(153, 153, 255, 0.5)',
+          'rgba(102, 0, 204, 0.5)',
+          'rgba(0, 0, 102, 0.5)'
         ],
         borderColor: [
-          genRGB(0.6),
+          'rgba(0, 0, 255, 0.5)',,
           genRGB(0.6),
           genRGB(0.6),
           genRGB(0.6),
