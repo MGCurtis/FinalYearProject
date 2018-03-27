@@ -58,11 +58,11 @@
 }
 
 .subHeading {
-  width: 66.7%;
+  width: 83.4%;
   background-color: #343a40;
   font-size: 26;
   color: #fff;
-  margin-left: 16.65%;
+  margin-left: 8.3%;
   padding-left: 10%;
   margin-bottom: 0;
 }
@@ -90,7 +90,7 @@ body {
     background-color:#eee;
     margin:0px;
     padding:0px;
-    width: 1920px;
+    width: 1536px;
 }
 
 h1 {

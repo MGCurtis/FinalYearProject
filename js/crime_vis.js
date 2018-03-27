@@ -114,6 +114,18 @@ var statName = ["", "", "", "", "", ""];
 
 var comp = null;
 
+var cols = [
+			'rgba(0, 0, 255, 0.7)',
+			'rgba(0, 150, 200, 0.7)',
+			'rgba(0, 255, 0, 0.7)',
+			'rgba(255, 0, 0, 0.7)',
+			'rgba(255, 204, 0, 0.7)',
+			'rgba(153, 51, 153, 0.7)'
+			]
+			
+var markerCol = 'blue';
+var markerCols = ['cyan', 'green-light', 'orange-dark', 'yellow', 'violet']
+
 
 var heatmapLayer = null;
 var extraHeatmapLayer = [];
@@ -187,7 +199,7 @@ function makeBasicMap() {
 	var mapLayer = new L.TileLayer(mapUrl, {minZoom: 4, maxZoom: 16, attribution: mapAttrib});
 
 	// Set initial map view to roughly middle of Ireland and add the tile layer
-	map.setView(new L.LatLng(53.33743, -7),8);
+	map.setView(new L.LatLng(53.33743, -7), 7);
 	map.addLayer(mapLayer);
 
 
@@ -490,6 +502,8 @@ function populateTable() {
             selected = this;
             selectNo = selected.rowIndex - 1;
             openStation = markers[selectNo];
+			openStation.options.icon.options.markerColor = markerCol;
+			console.log(openStation.options.icon.options);
             openStation.addTo(map).openPopup();
             map.panTo(openStation.getLatLng());
 
@@ -530,6 +544,7 @@ function populateTable() {
             extraSelected[selectedIndex] = this;
             extraSelectNo[selectedIndex] = extraSelected[selectedIndex].rowIndex - 1;
             extraOpenStation[selectedIndex] = markers[extraSelectNo[selectedIndex]];
+			extraOpenStation[selectedIndex].options.icon.options.markerColor = markerCols[selectedIndex];
             extraOpenStation[selectedIndex].addTo(map).openPopup();
             map.panTo(extraOpenStation[selectedIndex].getLatLng());
 
@@ -720,18 +735,20 @@ function makePie(ctx) {
         ],
         borderColor: [
           'rgba(0, 0, 255, 0.5)',,
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6),
-          genRGB(0.6)
+          'rgba(0, 0, 204, 0.5)',
+          'rgba(0, 102, 153, 0.5)',
+          'rgba(102, 153, 153, 0.5)',
+          'rgba(0, 204, 102, 0.5)',
+          'rgba(0, 153, 51, 0.5)',
+          'rgba(102, 153, 0, 0.5)',
+          'rgba(204, 204, 0, 0.5)',
+          'rgba(255, 153, 51, 0.5)',
+          'rgba(255, 0, 0, 0.5)',
+          'rgba(255, 0, 102, 0.5)',
+          'rgba(204, 0, 204, 0.5)',
+          'rgba(153, 153, 255, 0.5)',
+          'rgba(102, 0, 204, 0.5)',
+          'rgba(0, 0, 102, 0.5)'
         ],
         borderWidth: 1
       }]
@@ -759,44 +776,44 @@ function makeBarStations(ctx) {
       datasets: [{
         label: '# of Cases in ' + statName[0],
         fill: false,
-        borderColor: 'rgba(0, 0, 255, 0.5)',
-        backgroundColor: 'rgba(0, 0, 255, 0.5)',
+        borderColor: cols[0],
+        backgroundColor: cols[0],
         data: selectData
       },
       {
         label: '# of Cases in ' + statName[1],
         fill: false,
         data: extraSelectedStat[0],
-        borderColor: 'rgba(0, 150, 200, 0.5)',
-        backgroundColor: 'rgba(0, 150, 200, 0.5)'
+        borderColor: cols[1],
+        backgroundColor: cols[1],
       },
       {
         label: '# of Cases in ' + statName[2],
         fill: false,
         data: extraSelectedStat[1],
-        borderColor: 'rgba(0, 255, 0, 0.5)',
-        backgroundColor: 'rgba(0, 255, 0, 0.5)'
+        borderColor: cols[2],
+        backgroundColor: cols[2]
       },
       {
         label: '# of Cases in ' + statName[3],
         fill: false,
         data: extraSelectedStat[2],
-        borderColor: 'rgba(255, 0, 0, 0.5)',
-        backgroundColor: 'rgba(255, 0, 0, 0.5)'
+        borderColor: cols[3],
+        backgroundColor: cols[3]
       },
       {
         label: '# of Cases in ' + statName[4],
         fill: false,
         data: extraSelectedStat[3],
-        borderColor: 'rgba(255, 204, 0, 0.5)',
-        backgroundColor: 'rgba(255, 204, 0, 0.5)'
+        borderColor: cols[4],
+        backgroundColor: cols[4]
       },
       {
         label: '# of Cases in ' + statName[5],
         fill: false,
         data: extraSelectedStat[4],
-        borderColor: 'rgba(204, 51, 153, 0.5)',
-        backgroundColor: 'rgba(204, 51, 153, 0.5)'
+        borderColor: cols[5],
+        backgroundColor: cols[5]
       }]
     },
     options: {
@@ -829,36 +846,36 @@ function makeBarCrimes(ctx) {
       datasets: [{
         label: '# of Cases ',
         data: selectData,
-        backgroundColor: 'rgba(0, 0, 255, 0.5)',
-        borderColor: 'rgba(0, 0, 255, 0.5)',
+        borderColor: cols[0],
+        backgroundColor: cols[0],
         borderWidth: 1
       },
       {
         label: '# of Reported Cases ',
         data: extraSelectData[0],
-        backgroundColor: 'rgba(0, 150, 200, 0.5)',
-        borderColor: 'rgba(0, 150, 200, 0.5)',
+        borderColor: cols[1],
+        backgroundColor: cols[1],
         borderWidth: 1
       },
       {
         label: '# of Reported Cases ',
         data: extraSelectData[1],
-        backgroundColor: 'rgba(0, 255, 0, 0.5)',
-        borderColor: 'rgba(0, 255, 0, 0.5)',
+        borderColor: cols[2],
+        backgroundColor: cols[2],
         borderWidth: 1
       },
       {
         label: '# of Reported Cases ',
         data: extraSelectData[2],
-        backgroundColor: 'rgba(255, 0, 0, 0.5)',
-        borderColor: 'rgba(255, 0, 0, 0.5)',
+        borderColor: cols[3],
+        backgroundColor: cols[3],
         borderWidth: 1
       },
       {
         label: '# of Reported Cases ',
         data: extraSelectData[3],
-        backgroundColor: 'rgba(255, 204, 0, 0.5)',
-        borderColor: 'rgba(255, 204, 0, 0.5)',
+        borderColor: cols[4],
+        backgroundColor: cols[4],
         borderWidth: 1
       }]
     },
@@ -892,8 +909,8 @@ function makeBarSing(ctx) {
       datasets: [{
         label: '# of Cases in ' + statName[0],
         data: selectData,
-        backgroundColor: genRGB(0.7),
-        borderColor: genRGB(0.7),
+        borderColor: cols[0],
+        backgroundColor: cols[0],
         borderWidth: 1
       }]
     },
@@ -927,8 +944,8 @@ function makeLineStations(ctx) {
       datasets: [{
         label: '# of Cases in ' + statName[0],
         fill: false,
-        borderColor: 'rgba(0, 0, 255, 0.5)',
-        backgroundColor: 'rgba(0, 0, 255, 0.5)',
+        borderColor: cols[0],
+        backgroundColor: cols[0],
         data: selectData,
         lineTension: 0.2
       },
@@ -936,40 +953,40 @@ function makeLineStations(ctx) {
         label: '# of Cases in ' + statName[1],
         fill: false,
         data: extraSelectedStat[0],
-        borderColor: 'rgba(0, 150, 200, 0.5)',
-        backgroundColor: 'rgba(0, 150, 200, 0.5)',
+        borderColor: cols[1],
+        backgroundColor: cols[1],
         lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[2],
         fill: false,
         data: extraSelectedStat[1],
-        borderColor: 'rgba(0, 255, 0, 0.5)',
-        backgroundColor: 'rgba(0, 255, 0, 0.5)',
+        borderColor: cols[2],
+        backgroundColor: cols[2],
         lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[3],
         fill: false,
         data: extraSelectedStat[2],
-        borderColor: 'rgba(255, 0, 0, 0.5)',
-        backgroundColor: 'rgba(255, 0, 0, 0.5)',
+        borderColor: cols[3],
+        backgroundColor: cols[3],
         lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[4],
         fill: false,
         data: extraSelectedStat[3],
-        borderColor: 'rgba(255, 204, 0, 0.5)',
-        backgroundColor: 'rgba(255, 204, 0, 0.5)',
+        borderColor: cols[4],
+        backgroundColor: cols[4],
         lineTension: 0.2
       },
       {
         label: '# of Cases in ' + statName[5],
         fill: false,
         data: extraSelectedStat[4],
-        borderColor: 'rgba(204, 51, 153, 0.5)',
-        backgroundColor: 'rgba(204, 51, 153, 0.5)',
+        borderColor: cols[5],
+        backgroundColor: cols[5],
         lineTension: 0.2
       }]
     },
@@ -1001,8 +1018,8 @@ function makeLineCrimes(ctx) {
       datasets: [{
         label: $("#crimeDd option:selected").text(),
         fill: false,
-        borderColor: 'rgba(0, 0, 255, 0.5)',
-        backgroundColor: 'rgba(0, 0, 255, 0.5)',
+        borderColor: cols[0],
+        backgroundColor: cols[0],
         data: selectData,
         lineTension: 0.2
       },
@@ -1010,32 +1027,32 @@ function makeLineCrimes(ctx) {
         label: $("#crimeDd0 option:selected").text(),
         fill: false,
         data: extraSelectData[0],
-        borderColor: 'rgba(0, 150, 200, 0.5)',
-        backgroundColor: 'rgba(0, 150, 200, 0.5)',
+        borderColor: cols[1],
+        backgroundColor: cols[1],
         lineTension: 0.2
       },
       {
         label: $("#crimeDd1 option:selected").text(),
         fill: false,
         data: extraSelectData[1],
-        borderColor: 'rgba(0, 255, 0, 0.5)',
-        backgroundColor: 'rgba(0, 255, 0, 0.5)',
+        borderColor: cols[2],
+        backgroundColor: cols[2],
         lineTension: 0.2
       },
       {
         label: $("#crimeDd2 option:selected").text(),
         fill: false,
         data: extraSelectData[2],
-        borderColor: 'rgba(255, 0, 0, 0.5)',
-        backgroundColor: 'rgba(255, 0, 0, 0.5)',
+        borderColor: cols[3],
+        backgroundColor: cols[3],
         lineTension: 0.2
       },
       {
         label: $("#crimeDd3 option:selected").text(),
         fill: false,
         data: extraSelectData[3],
-        borderColor: 'rgba(255, 204, 0, 0.5)',
-        backgroundColor: 'rgba(255, 204, 0, 0.5)',
+        borderColor: cols[4],
+        backgroundColor: cols[4],
         lineTension: 0.2
       }]
     },
@@ -1066,8 +1083,8 @@ function makePointStations(ctx) {
       datasets: [{
         label: '# of Cases in ' + statName[0],
         fill: false,
-        borderColor: 'rgba(0, 0, 255, 0.7)',
-        backgroundColor: 'rgba(0, 0, 255, 0.7)',
+        borderColor: cols[0],
+        backgroundColor: cols[0],
         data: selectData,
         showLine: false
       },
@@ -1075,40 +1092,40 @@ function makePointStations(ctx) {
         label: '# of Cases in ' + statName[1],
         fill: false,
         data: extraSelectedStat[0],
-        borderColor: 'rgba(0, 150, 200, 0.7)',
-        backgroundColor: 'rgba(0, 150, 200, 0.7)',
+        borderColor: cols[1],
+        backgroundColor: cols[1],
         showLine: false
       },
       {
         label: '# of Cases in ' + statName[2],
         fill: false,
         data: extraSelectedStat[1],
-        borderColor: 'rgba(0, 255, 0, 0.7)',
-        backgroundColor: 'rgba(0, 255, 0, 0.7)',
+        borderColor: cols[2],
+        backgroundColor: cols[2],
         showLine: false
       },
       {
         label: '# of Cases in ' + statName[3],
         fill: false,
         data: extraSelectedStat[2],
-        borderColor: 'rgba(255, 0, 0, 0.7)',
-        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+        borderColor: cols[3],
+        backgroundColor: cols[3],
         showLine: false
       },
       {
         label: '# of Cases in ' + statName[4],
         fill: false,
         data: extraSelectedStat[3],
-        borderColor: 'rgba(255, 204, 0, 0.7)',
-        backgroundColor: 'rgba(255, 204, 0, 0.7)',
+        borderColor: cols[4],
+        backgroundColor: cols[4],
         showLine: false
       },
       {
         label: '# of Cases in ' + statName[5],
         fill: false,
         data: extraSelectedStat[4],
-        borderColor: 'rgba(204, 51, 153, 0.7)',
-        backgroundColor: 'rgba(204, 51, 153, 0.7)',
+        borderColor: cols[5],
+        backgroundColor: cols[5],
         showLine: false
       }]
     },
@@ -1140,8 +1157,8 @@ function makePointCrime(ctx) {
       datasets: [{
         label: $("#crimeDd option:selected").text(),
         fill: false,
-        borderColor: 'rgba(0, 0, 255, 0.7)',
-        backgroundColor: 'rgba(0, 0, 255, 0.7)',
+        borderColor: cols[0],
+        backgroundColor: cols[0],
         data: selectData,
         showLine: false
       },
@@ -1149,32 +1166,32 @@ function makePointCrime(ctx) {
         label: $("#crimeDd0 option:selected").text(),
         fill: false,
         data: extraSelectData[0],
-        borderColor: 'rgba(0, 150, 200, 0.7)',
-        backgroundColor: 'rgba(0, 150, 200, 0.7)',
+        borderColor: cols[1],
+        backgroundColor: cols[1],
         showLine: false
       },
       {
         label: $("#crimeDd1 option:selected").text(),
         fill: false,
         data: extraSelectData[1],
-        borderColor: 'rgba(0, 255, 0, 0.7)',
-        backgroundColor: 'rgba(0, 255, 0, 0.7)',
+        borderColor: cols[2],
+        backgroundColor: cols[2],
         showLine: false
       },
       {
         label: $("#crimeDd2 option:selected").text(),
         fill: false,
         data: extraSelectData[2],
-        borderColor: 'rgba(255, 0, 0, 0.7)',
-        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+        borderColor: cols[3],
+        backgroundColor: cols[3],
         showLine: false
       },
       {
         label: $("#crimeDd3 option:selected").text(),
         fill: false,
         data: extraSelectData[3],
-        borderColor: 'rgba(255, 204, 0, 0.7)',
-        backgroundColor: 'rgba(255, 204, 0, 0.7)',
+        borderColor: cols[4],
+        backgroundColor: cols[4],
         showLine: false
       }]
     },

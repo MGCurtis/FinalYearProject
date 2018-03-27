@@ -24,7 +24,7 @@
 #dataTable{
   overflow:scroll;
   height:33.5%;
-  width:40.65%;
+  width:40.5%;
   overflow:auto;
   border-style: solid;
   border-width: 2px;
@@ -48,17 +48,17 @@
 }
 
 #dropdowns button{
-  margin-top: 5%;
+  margin-top: 4%;
   margin-left: 10%;
 }
 
 #dropdowns input{
-  margin-top: 11%;
+  margin-top: 10%;
 }
 
 #dropdowns label{
   float: right;
-  margin-top: 6%;
+  margin-top: 4%;
   font-size: 14px;
   width: 70%;
 }
@@ -95,6 +95,10 @@
 
 #statSelect p{
   margin-bottom: 5%;
+}
+
+#statSelect label {
+	margin-right: 0;
 }
 
 #crimeSelect{
@@ -149,7 +153,8 @@
 
 .selector select{
   height: 28px;
-  margin-bottom: 5%;
+  margin-bottom: 1.5%;
+  margin-top: 0.6%;
 }
 
 .selector p{
@@ -159,12 +164,12 @@
 }
 
 .yearDd{
-  width: 28%;
+  width: 31%;
   float:right;
 }
 
 .crimeDd{
-  width: 70%;
+  width: 68%;
   margin-left: 0.7%;
 }
 
@@ -188,7 +193,7 @@
 }
 
 .heading{
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
   text-shadow:
     -1px -1px 0 #fff,
@@ -206,7 +211,7 @@ input[name="compSel"]{
 }
 
 input[name="statSel"] {
-  margin: 5% 5% 5% 10%;
+  margin: 5% 5% 5% 9%;
 }
 
 input[name="chartSel"] {
@@ -218,8 +223,8 @@ input[value="point"] {
 }
 
 body{
-  width: 1920px;
-  height: 953px;
+  width: 1536px;
+  height: 758px;
   margin: 0;
   padding: 0;
 }
