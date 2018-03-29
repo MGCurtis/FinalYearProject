@@ -844,35 +844,35 @@ function makeBarCrimes(ctx) {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
-        label: '# of Cases ',
+        label: $("#crimeDd option:selected").text(),
         data: selectData,
         borderColor: cols[0],
         backgroundColor: cols[0],
         borderWidth: 1
       },
       {
-        label: '# of Reported Cases ',
+        label: $("#crimeDd0 option:selected").text(),
         data: extraSelectData[0],
         borderColor: cols[1],
         backgroundColor: cols[1],
         borderWidth: 1
       },
       {
-        label: '# of Reported Cases ',
+        label: $("#crimeDd1 option:selected").text(),
         data: extraSelectData[1],
         borderColor: cols[2],
         backgroundColor: cols[2],
         borderWidth: 1
       },
       {
-        label: '# of Reported Cases ',
+        label: $("#crimeDd2 option:selected").text(),
         data: extraSelectData[2],
         borderColor: cols[3],
         backgroundColor: cols[3],
         borderWidth: 1
       },
       {
-        label: '# of Reported Cases ',
+        label: $("#crimeDd3 option:selected").text(),
         data: extraSelectData[3],
         borderColor: cols[4],
         backgroundColor: cols[4],
