@@ -122,7 +122,7 @@ var cols = [
 			'rgba(255, 204, 0, 0.7)',
 			'rgba(153, 51, 153, 0.7)'
 			]
-			
+
 var markerCol = 'blue';
 var markerCols = ['cyan', 'green-light', 'orange-dark', 'yellow', 'violet']
 
@@ -188,15 +188,17 @@ function onDeviceReady() {
 
 //Creates the map, gets tiles from the openstreetmap url and adds tiles to the map object
 function makeBasicMap() {
-    console.log("In makeBasicMap.");
-    //Initialize map
-    // set up the map
-	map = new L.Map('map', {zoomControl:false});
+  console.log("In makeBasicMap.");
+  //Initialize map
+  // set up the map
+  bounds = new L.LatLngBounds(new L.LatLng(51, -11.3), new L.LatLng(55.7, -5));
+
+	map = new L.Map('map', {zoomControl:false, maxBounds: bounds});
 
 	// Url for getting map, attribution for map tiles, and tile layer variable
 	var mapUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 	var mapAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-	var mapLayer = new L.TileLayer(mapUrl, {minZoom: 4, maxZoom: 16, attribution: mapAttrib});
+	var mapLayer = new L.TileLayer(mapUrl, {minZoom: 6, maxZoom: 16, attribution: mapAttrib});
 
 	// Set initial map view to roughly middle of Ireland and add the tile layer
 	map.setView(new L.LatLng(53.33743, -7), 7);
