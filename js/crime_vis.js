@@ -166,20 +166,6 @@ function onDeviceReady() {
     changeComp();
     $("input[name=statSel][value=main]").click();
 
-    map.on("zoomstart", function(){
-        if(map.hasLayer(markerLayer)){
-            removed = !removed;
-            map.removeLayer(markerLayer);
-        }
-    })
-
-    map.on("zoomend", function(){
-        if(removed == true) {
-            map.addLayer(markerLayer);
-            removed = !removed;
-        }
-    })
-
     map.on('click', findMyNearestGardaStation);
 
 }
@@ -234,6 +220,8 @@ function updateMapData() {
   crime = document.getElementById("crimeDd").value;
   console.log(year);
   console.log(crime);
+  if(selected !== null)
+  clearAllStations();
   if(year != "" && crime != ""){
     loadData();
     document.getElementById("map").getElementsByClassName("heading")[0].innerHTML = "Number of " + $("#crimeDd option:selected").text() + " cases for the year " + $("#yearDd option:selected").text()
@@ -360,7 +348,6 @@ function loadData() {
       }
       if($("input[name=max]").is(":checked")) {
         hmap = {max: maxAllVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
-
       }
       else {
         hmap = {max: maxVal, data: stats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
@@ -599,7 +586,7 @@ function makeChart(){
   if(myChart !== null){
     myChart.destroy();
   }
-  switch ($("input[name=chartSel]:checked").val()) {
+  switch (document.getElementById("chartDd").value) {
     case "pie":
       makePie(ctx);
       break;
@@ -756,6 +743,11 @@ function makePie(ctx) {
       }]
     },
     options: {
+      title: {
+        display: true,
+        padding: 1,
+        text: $("#crimeDd option:selected").text()
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -776,42 +768,42 @@ function makeBarStations(ctx) {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
-        label: '# of Cases in ' + statName[0],
+        label: '# in ' + statName[0],
         fill: false,
         borderColor: cols[0],
         backgroundColor: cols[0],
         data: selectData
       },
       {
-        label: '# of Cases in ' + statName[1],
+        label: '# in ' + statName[1],
         fill: false,
         data: extraSelectedStat[0],
         borderColor: cols[1],
         backgroundColor: cols[1],
       },
       {
-        label: '# of Cases in ' + statName[2],
+        label: '# in ' + statName[2],
         fill: false,
         data: extraSelectedStat[1],
         borderColor: cols[2],
         backgroundColor: cols[2]
       },
       {
-        label: '# of Cases in ' + statName[3],
+        label: '# in ' + statName[3],
         fill: false,
         data: extraSelectedStat[2],
         borderColor: cols[3],
         backgroundColor: cols[3]
       },
       {
-        label: '# of Cases in ' + statName[4],
+        label: '# in ' + statName[4],
         fill: false,
         data: extraSelectedStat[3],
         borderColor: cols[4],
         backgroundColor: cols[4]
       },
       {
-        label: '# of Cases in ' + statName[5],
+        label: '# in ' + statName[5],
         fill: false,
         data: extraSelectedStat[4],
         borderColor: cols[5],
@@ -819,6 +811,11 @@ function makeBarStations(ctx) {
       }]
     },
     options: {
+      title: {
+        display: true,
+        padding: 1,
+        text: $("#crimeDd option:selected").text()
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -909,7 +906,7 @@ function makeBarSing(ctx) {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
-        label: '# of Cases in ' + statName[0],
+        label: '# in ' + statName[0],
         data: selectData,
         borderColor: cols[0],
         backgroundColor: cols[0],
@@ -917,6 +914,11 @@ function makeBarSing(ctx) {
       }]
     },
     options: {
+      title: {
+        display: true,
+        padding: 1,
+        text: $("#crimeDd option:selected").text()
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -944,7 +946,7 @@ function makeLineStations(ctx) {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
-        label: '# of Cases in ' + statName[0],
+        label: '# in ' + statName[0],
         fill: false,
         borderColor: cols[0],
         backgroundColor: cols[0],
@@ -952,7 +954,7 @@ function makeLineStations(ctx) {
         lineTension: 0.2
       },
       {
-        label: '# of Cases in ' + statName[1],
+        label: '# in ' + statName[1],
         fill: false,
         data: extraSelectedStat[0],
         borderColor: cols[1],
@@ -960,7 +962,7 @@ function makeLineStations(ctx) {
         lineTension: 0.2
       },
       {
-        label: '# of Cases in ' + statName[2],
+        label: '# in ' + statName[2],
         fill: false,
         data: extraSelectedStat[1],
         borderColor: cols[2],
@@ -968,7 +970,7 @@ function makeLineStations(ctx) {
         lineTension: 0.2
       },
       {
-        label: '# of Cases in ' + statName[3],
+        label: '# in ' + statName[3],
         fill: false,
         data: extraSelectedStat[2],
         borderColor: cols[3],
@@ -976,7 +978,7 @@ function makeLineStations(ctx) {
         lineTension: 0.2
       },
       {
-        label: '# of Cases in ' + statName[4],
+        label: '# in ' + statName[4],
         fill: false,
         data: extraSelectedStat[3],
         borderColor: cols[4],
@@ -984,7 +986,7 @@ function makeLineStations(ctx) {
         lineTension: 0.2
       },
       {
-        label: '# of Cases in ' + statName[5],
+        label: '# in ' + statName[5],
         fill: false,
         data: extraSelectedStat[4],
         borderColor: cols[5],
@@ -993,6 +995,11 @@ function makeLineStations(ctx) {
       }]
     },
     options: {
+      title: {
+        display: true,
+        padding: 1,
+        text: $("#crimeDd option:selected").text()
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -1083,7 +1090,7 @@ function makePointStations(ctx) {
       labels: ["2003", "2004", "2005", "2006", "2007", "2008", "2009",
       "2010", "2011", "2012", "2013", "2014", "2015", "2016"],
       datasets: [{
-        label: '# of Cases in ' + statName[0],
+        label: '# in ' + statName[0],
         fill: false,
         borderColor: cols[0],
         backgroundColor: cols[0],
@@ -1091,7 +1098,7 @@ function makePointStations(ctx) {
         showLine: false
       },
       {
-        label: '# of Cases in ' + statName[1],
+        label: '# in ' + statName[1],
         fill: false,
         data: extraSelectedStat[0],
         borderColor: cols[1],
@@ -1099,7 +1106,7 @@ function makePointStations(ctx) {
         showLine: false
       },
       {
-        label: '# of Cases in ' + statName[2],
+        label: '# in ' + statName[2],
         fill: false,
         data: extraSelectedStat[1],
         borderColor: cols[2],
@@ -1107,7 +1114,7 @@ function makePointStations(ctx) {
         showLine: false
       },
       {
-        label: '# of Cases in ' + statName[3],
+        label: '# in ' + statName[3],
         fill: false,
         data: extraSelectedStat[2],
         borderColor: cols[3],
@@ -1115,7 +1122,7 @@ function makePointStations(ctx) {
         showLine: false
       },
       {
-        label: '# of Cases in ' + statName[4],
+        label: '# in ' + statName[4],
         fill: false,
         data: extraSelectedStat[3],
         borderColor: cols[4],
@@ -1123,7 +1130,7 @@ function makePointStations(ctx) {
         showLine: false
       },
       {
-        label: '# of Cases in ' + statName[5],
+        label: '# in ' + statName[5],
         fill: false,
         data: extraSelectedStat[4],
         borderColor: cols[5],
@@ -1132,6 +1139,11 @@ function makePointStations(ctx) {
       }]
     },
     options: {
+      title: {
+        display: true,
+        padding: 1,
+        text: $("#crimeDd option:selected").text()
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {

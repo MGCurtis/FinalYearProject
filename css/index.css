@@ -17,12 +17,14 @@
   font-size: 55px;
   color: teal;
   outline: black;
+  padding-left: 15px;
 }
 
 .carousel-control-prev-icon:after {
   content: '<';
   font-size: 55px;
   color: teal;
+  padding-right: 15px;
 }
 
 .heading {

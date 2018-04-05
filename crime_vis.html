@@ -53,14 +53,14 @@
       </div>
     </div>
     <div id="compButtons" class="selector">
-      <p>Select whether to compare multiple stations or multiple crimes</p>
+      <p>Select to compare:</p>
       <input type="radio" name="compSel" value="stations" onchange="changeComp()" checked><label>Stations &nbsp</label>
       <input type="radio" name="compSel" value="crimes" onchange="changeComp()"><label>Crimes</label>
     </div>
 
     <div id="compSelect" class="selector">
       <div id="statSelect" class="valSel">
-        <p>Click a button then select another station to compare</p>
+        <p>Click a button then the map to select the nearest station</p>
         <input type="radio" name="statSel" value="main" onchange="changeStat()" checked><label>Station 1</label> <img src="img/markerBlu.png">
         <input type="radio" name="statSel" value="0" onchange="changeStat()"><label>Station 2</label> <img src="img/markerLiBlu.png"> <br/>
         <input type="radio" name="statSel" value="1" onchange="changeStat()"><label>Station 3</label> <img src="img/markerGrn.png">
@@ -151,13 +151,11 @@
 
     <div id="chartSelect" class="selector">
       <p>Select type of chart to be displayed</p>
-      <input type="radio" name="chartSel" value="line" onchange="makeChart()" checked>Line Chart
-      <input type="radio" name="chartSel" value="point" onchange="makeChart()">Point Chart
-      <br/>
-      <input type="radio" name="chartSel" value="bar" onchange="makeChart()">Bar Chart
-      <input type="radio" name="chartSel" value="barSing" onchange="makeChart()">Single Bar
-      <br/>
-      <input type="radio" name="chartSel" value="pie" onchange="makeChart()">Pie Chart
+      <select onChange=makeChart() id="chartDd" class="chartDd">
+        <option value="line" selected>Line Chart</option>
+        <option value="point">Point Chart</option><option value="bar">Bar Chart</option>
+        <option value="barSing">Single Bar Chart</option><option value="pie">Pie Chart</option>
+      </select>
     </div>
 </div>
 <div id="map"></div>

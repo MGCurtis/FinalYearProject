@@ -1,6 +1,6 @@
 #buttons{
     width: 19.5%;
-    height: 66%;
+    height: 57%;
     margin: 0;
     background-color: #eee;
 }
@@ -15,7 +15,7 @@
 }
 
 #map {
-    height: 66%;
+    height: 57%;
     width: 80.3%;
     float: right;
     border-left: 2px black solid;
@@ -23,7 +23,7 @@
 
 #dataTable{
   overflow:scroll;
-  height:33.5%;
+  height:42.5%;
   width:40.5%;
   overflow:auto;
   border-style: solid;
@@ -31,7 +31,7 @@
 }
 
 #graph{
-  height:33.5%;
+  height:42.5%;
   width:58.93%;
   border-style: solid;
   border-width: 2px;
@@ -39,12 +39,12 @@
 }
 
 #dropdowns{
-  height: 15%;
+  height: 16%;
   margin-bottom: 2%;
 }
 
 #dropdowns select{
-  margin-bottom: 2%;
+  margin-bottom: 1%;
 }
 
 #dropdowns button{
@@ -82,7 +82,7 @@
 }
 
 #compSelect{
-  height: 40%;
+  height: 50%;
 }
 
 #compSelect p{
@@ -115,8 +115,9 @@
 }
 
 #chartSelect p{
-  margin-bottom: 0;
+  margin-bottom: 5%;
   text-align: center;
+  height: 10%;
 }
 
 #dTable .ui-selecting {
@@ -124,6 +125,12 @@
 }
 #dTable .ui-selected {
   background: #999;
+}
+
+#chartDd {
+  margin: auto;
+  overflow: auto;
+  width: inherit;
 }
 
 .map-marker{
@@ -146,14 +153,14 @@
 }
 
 .selector{
-  height: 33.3%;
+  height: 17%;
   width: 100%;
   border-bottom: 1px solid black;
 }
 
 .selector select{
   height: 28px;
-  margin-bottom: 1.5%;
+  margin-bottom: 2.5%;
   margin-top: 0.6%;
 }
 
@@ -211,7 +218,7 @@ input[name="compSel"]{
 }
 
 input[name="statSel"] {
-  margin: 5% 5% 5% 9%;
+  margin: 7% 5% 4% 9%;
 }
 
 input[name="chartSel"] {
