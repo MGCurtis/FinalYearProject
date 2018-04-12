@@ -16,35 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/*
-var app = {
-    // Application Constructor
-    initialize: function() {
-        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-    },
-
-    // deviceready Event Handler
-    //
-    // Bind any cordova events here. Common events are:
-    // 'pause', 'resume', etc.
-    onDeviceReady: function() {
-        this.receivedEvent('deviceready');
-    },
-
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
-    }
-};
-
-app.initialize();*/
 
 //Map variable
 var map;
@@ -55,65 +26,68 @@ var gsIcon = L.ExtraMarkers.icon({
     iconColor: 'white',
     prefix: 'fa'
 });
-//Divicon for stations, made because icon with extramarkers cause performance hitches
-var myMarker = L.divIcon({
-    className: 'map-marker marker-color-gray a-class',
-    iconSize: [28,28],
-    html:'<i class="fa fa-fw fa-shield"></i>'
-});
 
-//Icon for user location
-var userIcon = L.ExtraMarkers.icon({
-    icon: 'fa-arrow-down',
-    prefix: 'fa'
-})
-//Var to store user lat and lon
-var userLoc;
 //Array for storing all garda station markers, for creating layer group
 var markers = [];
-//Layer group var
-var markerLayer;
-//Boolean used for removing markers on zoom and replacing on zoomend, used for debugging in browser
-var removed = false;
-//Var for storing the user marker
-var user;
-
+//Index of closest station to where the user has clicked
 var closestIndex;
-
+//Layer control menu, let's user switch individual heatmap layers on and off
 var lCtrl;
-
+//Array of stations, houses location data, names, counties etc
 var stats = [];
+//Array for the selected crime rates for the selected year
 var vals = [];
+//Array for the selected crime rates for all years, used in charts
 var allVals = [];
+//Array for creating the heatmap, populated with max value
+//location data, and crime values for the selected year
 var hmap = [];
-
-var extraStats = [];
+//Array of arrays for the extra selected crime and year
 var extraVals = [];
+//Array of arrays for the selected crime across all years
 var extraAllVals = [];
+//Array of arrays for extra heatmaps
 var extraHmap = [];
-
+//Vars for storing selected crime and year
 var year = "";
 var crime = "";
-
+//Array of extra selected crimes and years
 var extraYear = [];
 var extraCrime = [];
-
+//Var for storing selected station index
 var selected = null;
+//Var for storing instantiated chart
 var myChart = null;
+//Var for storing the selected station's position in the table
 var selectNo = null;
+//Var refers to the opened marker for the selected station
+//Used to remove marker when another position is clicked
 var openStation = null;
+//Var for the selected crime rate for the selected station across all years
+//Used for plotting selected station on the chart
 var selectData = [];
-
+//Array for extra selected crime rates for the selected station across all years
+//Used for plotting extra crimes for one station on the chart
 var extraSelectData = [];
+//Arrya  for storing extra selected stations indexes
 var extraSelected = [null, null, null, null, null];
+//Var refers to the opened marker for the selected station
+//Used to remove marker when another position is clicked
 var extraOpenStation = [];
+//Array for selected crime rates for extra selected stations across all years
+//Used for plotting extra stations on the chart
 var extraSelectedStat = [];
+//Var for storing which station radio button in the UI is selected
+//Lets the application know which selected station to update
+//When a knew location / table row is clicked i.e. if Station 3
+//is selected then the map is clicked update the stored Station 3
 var selectedIndex = null;
+//Array for storing the extra selected stations' positions in the table
 var extraSelectNo = [];
+//Array for storing names of selected stations, used for labelling chart
 var statName = ["", "", "", "", "", ""];
 
-var comp = null;
-
+//rbga colours for charts so that there is some transparency
 var cols = [
 			'rgba(0, 0, 255, 0.7)',
 			'rgba(0, 150, 200, 0.7)',
@@ -122,43 +96,45 @@ var cols = [
 			'rgba(255, 204, 0, 0.7)',
 			'rgba(153, 51, 153, 0.7)'
 			]
-
+//Colour for primary marker
 var markerCol = 'blue';
+//Colours for additional markers
 var markerCols = ['cyan', 'green-light', 'orange-dark', 'yellow', 'violet']
-
-
+//Var for the primary heatmap layer of the map
 var heatmapLayer = null;
+//Array for extra heatmap layers of the map
 var extraHeatmapLayer = [];
+//Configuration for generating heatmaps
+//Default cfg from https://www.patrick-wied.at/static/heatmapjs/plugin-leaflet-layer.html
+//used as base and then modified
 var cfg = {
-  // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-  // if scaleRadius is false it will be the constant radius used in pixels
+  // radius of the heat intensity from a point
   "radius": .1,
+  //transparency of the heatmap
   "maxOpacity": .6,
-  // scales the radius based on map zoom
+  // scales radius of the heat intensity from a point depending on zoom level
   "scaleRadius": true,
-  // if set to false the heatmap uses the global maximum for colorization
-  // if activated: uses the data maximum within the current map boundaries
-  //   (there will always be a red spot with useLocalExtremas true)
+  //Regenerate heatmap with reference to only the points that are in view
+  //So the highest value currently on screen will be red and other points will
+  //be relative to this
   "useLocalExtrema": false,
-  // which field name in your data represents the latitude - default "lat"
+  // field name in the hmap array that contains the latitude
   latField: 'lat',
-  // which field name in your data represents the longitude - default "lng"
+  // field name in the hmap array that contains the longitude
   lngField: 'lng',
-  // which field name in your data represents the data value - default "value"
+  // field name in the hmap array that contains the value for this point
   valueField: 'count'
 };
 
+//Triggers on the application loading, then listens for the 'deviceready'
 function  onLoad() {
     console.log("In onLoad.");
     document.addEventListener('deviceready', onDeviceReady, false);
 }
 
-
-
-
-
-
 //When device is ready make the map and load the garda stations via ajax query
+//Also ensures the "Stations / Crimes" radio button is set to stations on start
+//Sets the onClick function of the map to findMyNearestGardaStation
 function onDeviceReady() {
     console.log("In onDeviceReady.");
     makeBasicMap();
@@ -170,13 +146,11 @@ function onDeviceReady() {
 
 }
 
-
-
 //Creates the map, gets tiles from the openstreetmap url and adds tiles to the map object
 function makeBasicMap() {
   console.log("In makeBasicMap.");
   //Initialize map
-  // set up the map
+  // set up the map latitude and longitude bounds to stop user from scrolling away from Ireland
   bounds = new L.LatLngBounds(new L.LatLng(51, -11.3), new L.LatLng(55.7, -5));
 
 	map = new L.Map('map', {zoomControl:false, maxBounds: bounds});
@@ -190,14 +164,16 @@ function makeBasicMap() {
 	map.setView(new L.LatLng(53.33743, -7), 7);
 	map.addLayer(mapLayer);
 
-
+  // Add heading to the bottom left of the map
   L.control.heading({ position: 'bottomleft' }).addTo(map);
+  // Add zoom control to top right of the map
   L.control.zoom({
     position: 'topright'
   }).addTo(map);
 
 }
 
+//Create the heading object to add to the map, extends L.Control class
 L.control.Heading = L.Control.extend({
   onAdd: function(map){
     var p = L.DomUtil.create('p', 'heading');
@@ -213,13 +189,12 @@ L.control.heading = function(opts) {
   return new L.control.Heading(opts);
 }
 
-
-
+//Gets the selected crime and year from dropdowns, gets rid of selected station markers if present
+//If there is a selection in the crime and year dropdowns then loadData is called and the heading is updated
+//Function is called upon changing one of the dropdowns
 function updateMapData() {
   year = document.getElementById("yearDd").value;
   crime = document.getElementById("crimeDd").value;
-  console.log(year);
-  console.log(crime);
   if(selected !== null)
   clearAllStations();
   if(year != "" && crime != ""){
@@ -228,10 +203,10 @@ function updateMapData() {
   }
 }
 
-//Loops through marker array, if distance of current index's marker from user marker is shorter
+//Loops through marker array, if distance of current index's marker from clicked location is shorter
 //than the current shortest stored distance make the closest index var equal the current index
 //and make the closest distance var equal the current distance
-//At the end of the loop open the popup of the closest garda station.
+//At the end of the loop select the table row for the nearest garda station.
 function findMyNearestGardaStation(e) {
     var closestDist =  Number.MAX_SAFE_INTEGER;
     var currentDist;
@@ -247,6 +222,10 @@ function findMyNearestGardaStation(e) {
     dTable.rows[closestIndex].dispatchEvent(new Event("mousedown"));
 }
 
+//Gets the checked radio button between Stations and Crimes in second section of menu
+//Changes the third section of the menu accordingly showing either the Stations
+//or Crimes comparison menu, calls makeChart after changing so that it reflects
+//what is looking to be compared. Called when one of those radio buttons is clicked
 function changeComp() {
   var comp = $("input[name=compSel]:checked").val();
   switch (comp) {
@@ -255,7 +234,6 @@ function changeComp() {
       document.getElementById("statSelect").style.display = "inline-block";
       document.getElementById("crimeSelect").style.display = "none";
       comp = "stations";
-      console.log(comp);
       break;
     case "crimes":
       $("input[name=statSel][value=main]").click();
@@ -263,27 +241,24 @@ function changeComp() {
       document.getElementById("statSelect").style.display = "none";
       document.getElementById("crimeSelect").style.display = "inline-block";
       comp = "crimes";
-      console.log(comp);
       makeChart();
       break;
   }
 }
 
+//This is called if the user clicks one of the radio buttons in the Stations section
+//for Stations 1 - 6. Changes the selected index to reflect which station is selected.
 function changeStat() {
   if($("input[name=statSel]:checked").val() != "main"){
     selectedIndex = $("input[name=statSel]:checked").val();
-    console.log(selectedIndex);
   }
   else{
     selectedIndex = null;
-    console.log(selectedIndex);
   }
 }
 
-//Makes ajax call to django application, receives json and creates a marker for every object in the json from lat and lon
-//Binds a popup to each marker with the name, address, county, and phone number for the station
+//Makes AJAX call to Django API, receives json and creates a marker for every object in the json from lat and lon
 //Adds each marker to the markers array
-//Once loop is finished and the array has every marker in it, it runs the showGardaStations function
 function loadGardaStations() {
     $.ajax({
     url: 'http://139.59.162.120/stations/',
@@ -297,14 +272,19 @@ function loadGardaStations() {
           markers.push(marker);
       }
 
-      //showGardaStations();
     }
     //dataType: dataType
     });
 
 }
 
-
+//Called in teh updateMapData function. Makes another AJAX call, this time for crime data.
+//Makes an array of the values for the selected year and one for all years.
+//Gets a max value for both of these arrays. Binds a popup to each station marker
+//with station name, county, and number of cases of selected crime in selected year.
+//Creates formatted array for generating heatmap with the max value, lat, long, and value.
+//Depending on status of checkbox in top menu max value with either be for the selected
+//year or across all years. Heatmap is then generated and table is populated.
 function loadData() {
   $.ajax({
     dataType: "json",
@@ -326,10 +306,7 @@ function loadData() {
         }
         return val;
       });
-      console.log(maxAllVal);
 
-
-      //console.log(vals);
       for(var i = 0; i < stats.length; i++)
       {
         stats[i].value = vals[i];
@@ -337,9 +314,6 @@ function loadData() {
           maxVal = vals[i];
         }
       }
-
-
-      //console.log(Math.max(vals));
 
       for(var i = 0; i < stats.length; i++)
       {
@@ -367,19 +341,9 @@ function loadData() {
   });
 }
 
-function heatmapStart() {
-  //console.log("Second HMAP", hmap);
-  //console.log(hmap.max);
-
-}
-
-function heatmapUpdate() {
-  heatmapLayer.setData(hmap);
-}
-
+//Clears primary heatmap and resets dropdowns and chart
 function clearMainCrimes() {
   heatmapLayer.setData({data:[]});
-  //console.log(extraAllVals);
   allVals = null;
   selectData = null;
 
@@ -388,6 +352,8 @@ function clearMainCrimes() {
   makeChart();
 }
 
+//Clear the selected station, e.g. if there are six station markers on the map
+//and Station 4 is selected this function will only clear Station 4
 function clearSelectedStation() {
   if (selectedIndex == null){
     selected.className='';
@@ -406,6 +372,7 @@ function clearSelectedStation() {
   makeChart();
 }
 
+//Clears all stations
 function clearAllStations() {
   if ( selectData !== null ) {
     selected.className='';
@@ -419,24 +386,23 @@ function clearAllStations() {
   $("input[name=statSel][value=main]").click();
 }
 
+//Clears all but the primary station, Station 1
 function clearExtraStations() {
   for(var i = 0; i < extraSelected.length; i++){
     if ( extraSelected[i] !== null ) {
-      console.log("Hi");
       extraSelected[i].className='';
       markers[extraSelectNo[i]].remove();
       extraSelected[i] = null;
       extraSelectedStat[i] = null;
       statName[i+1] = "";
-      console.log(statName);
     }
   }
 }
 
+//Clears all the extra heatmaps and resets extra dropdowns
 function clearCrimes() {
   for(var i = 0; i < extraHeatmapLayer.length; i++){
     extraHeatmapLayer[i].setData({data:[]});
-    //console.log(extraAllVals);
     extraAllVals[i] = null;
     extraSelectData[i] = null;
   }
@@ -444,6 +410,9 @@ function clearCrimes() {
   makeChart();
 }
 
+//Does not clear heatmaps but hides the layers from the map.
+//This lets the user keep the extra crime values for the charts, but clears up
+//the potentially cluttered map to just the primary heatmap
 function hideHeatmaps() {
   for(var i = 0; i < extraHeatmapLayer.length; i++){
     if(map.hasLayer(extraHeatmapLayer[i]))
@@ -451,89 +420,89 @@ function hideHeatmaps() {
   }
 }
 
+//Function for populating the table and making it selectable.
+//This function was written with some reference to https://sweetcode.io/scrollable-selectable-html-table/
 function populateTable() {
   var dTable = document.getElementById("dTable").getElementsByTagName("tBody")[0];
+  //If the table hasn't been populated already populate it and add the functions for mouseover, mouseout and mousedown
   if(dTable.rows.length <= 1){
     for(var i=0; i<stats.length; i++){
       var row = dTable.insertRow(dTable.rows.length);
-
+      //If the mouse is on a row change its class to 'highlight' so CSS changes
       row.onmouseover=function(){
-        // 'highlight' color is set in tablelist.css
         if ( this.className === '') {
             this.className='highlight';
         }
         return false
       }
+      //If the mouse moves off then remove the 'highlight' class
       row.onmouseout=function(){
         if ( this.className === 'highlight') {
             this.className='';
         }
         return false
       }
-
+      //If a row is clicked change its class to 'clicked' so css changes
       row.onmousedown=function(){
-        //
-        // Toggle the selected state of this row
-        //
-
-        // 'clicked' color is set in tablelist.css.
+        //If Station 1 is selected in the menu
         if ( selectedIndex == null ) {
+          //If this row is not 'clicked' then deselect if there is a currently selected row
           if ( this.className !== 'clicked' ) {
-            // Clear previous selection
-
             if ( selected !== null ) {
                 selected.className='';
                 markers[selected.rowIndex -1].remove();
             }
 
-            // Mark this row as selected
+            //Then mark this row as clicked, make 'selected' equal to this,
+            //make 'selectNo' equal to one less than the row index, as row index starts at 1.
+            //Make 'openStation' equal the marker that corresponds to this station.
+            //Coour the marker accordingly, add it to the map, open the popup, and pan it into view.
             this.className='clicked';
             selected = this;
             selectNo = selected.rowIndex - 1;
             openStation = markers[selectNo];
-			openStation.options.icon.options.markerColor = markerCol;
-			console.log(openStation.options.icon.options);
+      			openStation.options.icon.options.markerColor = markerCol;
             openStation.addTo(map).openPopup();
             map.panTo(openStation.getLatLng());
 
+            //'selectData' equals every years value for selected crime at this station
+            //statName entry at the corresponding position equals this station's name
             selectData = Object.values(allVals[selectNo]);
             statName[0] = stats[selectNo].name;
-            //console.log(selectedIndex);
 
-              //selectData = Object.values(allVals[closestIndex]);
+            //For each extra crime selected put the value of the crime across all years at this station
+            //into the 'extraSelectData' array
             for(var i = 0; i < extraAllVals.length; i++)
             {
               if(extraAllVals[i] !== null)
               {
-                console.log("not null");
                 extraSelectData[i] = Object.values(extraAllVals[i][selectNo]);
               }
             }
-            console.log(statName);
+            //Make the chart with the selected data
             makeChart();
 
           }
+          //If this row is 'clicked' then remove the marker and remove the 'clicked' class
           else {
             this.className='';
             markers[selected.rowIndex -1].remove();
             selected = null;
           }
         }
+        //Same as above but for extra stations (Station 2 - 6) instead of primary station
         else {
 
           if ( this.className !== 'clicked' ) {
-            // Clear previous selection
-
             if ( extraSelected[selectedIndex] !== null ) {
                 extraSelected[selectedIndex].className='';
                 markers[extraSelectNo[selectedIndex]].remove();
             }
-            // Mark this row as selected
             this.className='clicked';
             extraSelected[selectedIndex] = this;
             extraSelectNo[selectedIndex] = extraSelected[selectedIndex].rowIndex - 1;
             extraOpenStation[selectedIndex] = markers[extraSelectNo[selectedIndex]];
-			extraOpenStation[selectedIndex].options.icon.options.markerColor = markerCols[selectedIndex];
+      			extraOpenStation[selectedIndex].options.icon.options.markerColor = markerCols[selectedIndex];
             extraOpenStation[selectedIndex].addTo(map).openPopup();
             map.panTo(extraOpenStation[selectedIndex].getLatLng());
 
@@ -556,6 +525,7 @@ function populateTable() {
         return true
       }
 
+      //Code for populating the cells, first col is name, second is county, third is value
       var cell1 = row.insertCell(0);
       var cell2 = row.insertCell(1);
       var cell3 = row.insertCell(2);
@@ -565,23 +535,18 @@ function populateTable() {
       cell3.innerHTML = stats[i].value;
     }
   }
+  //If table is already populated then just update the value for the rows
   else{
     for(var i=0; i<stats.length; i++){
       dTable.rows[i].cells[2].innerHTML = stats[i].value;
-      //cell3.innerHTML = stats[i].value;
     }
   }
 }
 
-function genRGB(a){
-  var r = Math.floor((Math.random() * 130) + 120);
-  var g = Math.floor((Math.random() * 130) + 100);
-  var b = Math.floor((Math.random() * 130) + 100);
-
-  return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')'
-}
-
+//Function to generate the chart. Destroys existing chart if there is one,
+//gets the selected chart type, and through switch statment generates the appropriate chart
 function makeChart(){
+  //Variable refers to the HTML canvas for the chart
   var ctx = document.getElementById("myChart").getContext('2d');
   if(myChart !== null){
     myChart.destroy();
@@ -622,15 +587,17 @@ function makeChart(){
   }
 }
 
+//Called if one of the extra dropdowns is changed, functions same as updateMapData.
+//Generates another heatmap to overlay if crime and year are selected
 function extraMapData(n) {
   extraYear[n] = document.getElementById("yearDd" + n).value;
   extraCrime[n] = document.getElementById("crimeDd" + n).value;
-  console.log(extraYear[n]);
-  console.log(extraCrime[n]);
   if(extraYear[n] != "" && extraCrime[n] != "")
   loadExtraData(n);
 }
 
+//Same as lodaData, loads extra crime data selected in extra dropdowns,
+//generate the heatmap, and overlay it on top of exisitng heatmap(s).
 function loadExtraData(n) {
   $.ajax({
     dataType: "json",
@@ -639,9 +606,7 @@ function loadExtraData(n) {
     success: function(values){
 
       var newMaxAllVal = 0;
-      //console.log(stats);
       var newVals = values.map(val => (parseInt(val["v" + extraYear[n]]) ));
-      //console.log(extraVals[n]);
       extraVals[n] = newVals;
       var newAllVals = values.map(function(val) {
         delete val.Name;
@@ -655,7 +620,6 @@ function loadExtraData(n) {
       });
 
       extraAllVals[n] = newAllVals;
-      //console.log(vals);
       var newmaxVal = 0;
       var newStats = stats;
 
@@ -667,20 +631,13 @@ function loadExtraData(n) {
         }
       }
 
-      console.log(newStats);
-
       if($("input[name=max]").is(":checked")) {
         extraHmap[n] = {max: newMaxAllVal, data: newStats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
       }
       else {
         extraHmap[n] = {max: newmaxVal, data: newStats.map(x => ({ lat: x.lat, lng: x.long, count: x.value}))};
       }
-      //console.log(extraVals[n]);
-      //console.log(extraAllVals[n]);
-      console.log(extraHmap[n]);
-      //console.log(stats[0]);
       if(extraHeatmapLayer[n] == null){
-        console.log("hello");
         extraHeatmapLayer[n] = new HeatmapOverlay(cfg);
         //lCtrl = L.control.layers(null).addTo(map);
         map.addLayer(extraHeatmapLayer[n]);
@@ -690,13 +647,15 @@ function loadExtraData(n) {
       //populateTable();
 
       //$("#dTable").selectable();
-      //console.log(hmap);
       //alert(hmap[1].toSource())
     }
   });
   //setTimeout(heatmapStart(), 5000);
 }
 
+//Function for making pie chart.
+//Labels colours with years, data is only primary crime and station.
+//Titled with crime type and station name
 function makePie(ctx) {
   myChart = new Chart(ctx, {
     type: "pie",
@@ -746,7 +705,7 @@ function makePie(ctx) {
       title: {
         display: true,
         padding: 1,
-        text: $("#crimeDd option:selected").text()
+        text: $("#crimeDd option:selected").text() + ' in ' + statName[0]
       },
       responsive: true,
       maintainAspectRatio: false,
@@ -761,6 +720,9 @@ function makePie(ctx) {
   });
 }
 
+//Function for making bar chart comparing stations.
+//Labels colours with station names, data is primary crime for each selected station.
+//Titled with crime type. Colours are defined in 'cols' arrary
 function makeBarStations(ctx) {
   myChart = new Chart(ctx, {
     type: "bar",
@@ -836,6 +798,9 @@ function makeBarStations(ctx) {
   });
 }
 
+//Function for making bar chart comparing crimes at a single station.
+//Labels colours with selected crimes, data is all selected crimes for selected station.
+//Titled with selected station name. Colours are defined in 'cols' arrary
 function makeBarCrimes(ctx) {
   myChart = new Chart(ctx, {
     type: "bar",
@@ -879,6 +844,11 @@ function makeBarCrimes(ctx) {
       }]
     },
     options: {
+      title: {
+        display: true,
+        padding: 1,
+        text: statName[0]
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -899,6 +869,9 @@ function makeBarCrimes(ctx) {
   });
 }
 
+//Function for making bar chart for just primary station and primary crime.
+//Just one colour, deep blue for primary station / crime. Data is primary crime for primary station.
+//Titled with crime type, colour labelled with station name. Colour is defined in 'cols' arrary
 function makeBarSing(ctx) {
   myChart = new Chart(ctx, {
     type: "bar",
@@ -939,6 +912,9 @@ function makeBarSing(ctx) {
   });
 }
 
+//Function for making line chart comparing stations.
+//Labels colours with station names, data is primary crime for each selected station.
+//Titled with crime type. Colours are defined in 'cols' arrary
 function makeLineStations(ctx) {
   myChart = new Chart(ctx, {
       type: "line",
@@ -1017,8 +993,10 @@ function makeLineStations(ctx) {
   });
 }
 
+//Function for making line chart comparing crimes at a single station.
+//Labels colours with selected crimes, data is all selected crimes for selected station.
+//Titled with selected station name. Colours are defined in 'cols' arrary
 function makeLineCrimes(ctx) {
-  console.log(extraSelectData);
   myChart = new Chart(ctx, {
       type: "line",
     data: {
@@ -1066,6 +1044,11 @@ function makeLineCrimes(ctx) {
       }]
     },
     options: {
+      title: {
+        display: true,
+        padding: 1,
+        text: statName[0]
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -1083,6 +1066,9 @@ function makeLineCrimes(ctx) {
   });
 }
 
+//Function for making point chart comparing stations.
+//Labels colours with station names, data is primary crime for each selected station.
+//Titled with crime type. Colours are defined in 'cols' arrary
 function makePointStations(ctx) {
   myChart = new Chart(ctx, {
       type: "line",
@@ -1161,8 +1147,10 @@ function makePointStations(ctx) {
   });
 }
 
+//Function for making point chart comparing crimes at a single station.
+//Labels colours with selected crimes, data is all selected crimes for selected station.
+//Titled with selected station name. Colours are defined in 'cols' arrary
 function makePointCrime(ctx) {
-  console.log(extraSelectData);
   myChart = new Chart(ctx, {
       type: "line",
     data: {
@@ -1210,6 +1198,11 @@ function makePointCrime(ctx) {
       }]
     },
     options: {
+      title: {
+        display: true,
+        padding: 1,
+        text: statName[0]
+      },
       responsive: true,
       maintainAspectRatio: false,
       scales: {

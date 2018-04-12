@@ -69,6 +69,11 @@
   margin-bottom: 0;
 }
 
+.subHeading label {
+  float: right;
+  font-size: 12;
+}
+
 .text {
   background-color: #eee;
   font-size: 20;
